@@ -8,78 +8,72 @@
 </head>
 <body>
 
-  <!-- MENU DE SELEÇÃO -->
-  <div id="menu" class="overlay-screen">
-    <div class="menu-box">
+  <div id="tela-menu" class="modal-menu">
+    <div class="caixa-menu">
       <h1>Street Figther Lite</h1>
-      
-      <!-- Escolha do Modo -->
-      <div class="field-group">
-        <label for="mode-select">Modo de Jogo:</label>
-        <select id="mode-select">
+
+      <div class="grupo-campo">
+        <label for="seletor-modo">Modo de Jogo:</label>
+        <select id="seletor-modo">
           <option value="pvp">Jogador vs Jogador (PvP)</option>
           <option value="pvc">Jogador vs PC</option>
         </select>
       </div>
 
       <!-- Escolha dos Lutadores -->
-      <div class="field-group inline-fields">
+      <div class="grupo-campo campos-em-linha">
         <div>
-          <label for="p1-select">Lutador P1:</label>
-          <select id="p1-select">
-            <option value="ryu">Ryu</option>
-            <option value="ken">Ken</option>
+          <label for="seletor-p1">Lutador P1:</label>
+          <select id="seletor-p1">
+            <!-- Personagens colocados dinamicamente pelo js -->
           </select>
         </div>
         <div>
-          <label for="p2-select">Lutador P2 / PC:</label>
-          <select id="p2-select">
-            <option value="ken">Ken</option>
-            <option value="ryu">Ryu</option>
+          <label for="seletor-p2">Lutador P2 / PC:</label>
+          <select id="seletor-p2">
+            <!-- Personagens colocados dinamicamente pelo js -->
           </select>
         </div>
       </div>
 
       <!-- Escolha do Cenário -->
-      <div class="field-group">
-        <label for="bg-select">Cenário:</label>
-        <select id="bg-select">
-          <option value="cenario1">Cenário 1 (Rua)</option>
-          <option value="cenario2">Cenário 2 (Templo)</option>
+      <div class="grupo-campo">
+        <label for="seletor-cenario">Cenário:</label>
+        <select id="seletor-cenario">
+            <!-- Cenários colocados dinamicamente pelo js -->
         </select>
       </div>
 
-      <button id="start-btn" class="btn">INICIAR LUTA</button>
+      <button id="botao-iniciar" class="botao">INICIAR LUTA</button>
     </div>
   </div>
 
-  <!-- ÁREA DE COMBATE E INTERFACE -->
-  <div id="game-container">
-    <!-- HUD: Barras de Vida Flutuantes -->
-    <div id="hud">
-      <div class="player-hud">
-        <span id="p1-name" class="player-label">P1: RYU</span>
-        <div class="life-bar-outer">
-          <div id="p1-life" class="life-bar-inner"></div>
+  <div id="container-jogo">
+    <div id="painel-hud">
+      <div class="hud-jogador">
+        <span id="nome-p1" class="rotulo-jogador">P1: RYU</span>
+        <div class="barra-vida-externa">
+          <div id="vida-p1" class="barra-vida-interna"></div>
         </div>
       </div>
 
-      <div class="timer-box">
-        <span id="game-timer">99</span>
+      <div class="caixa-temporizador">
+        <span id="tempo-jogo">99</span>
       </div>
 
-      <div class="player-hud align-right">
-        <span id="p2-name" class="player-label">P2: KEN</span>
-        <div class="life-bar-outer">
-          <div id="p2-life" class="life-bar-inner"></div>
+      <div class="hud-jogador alinhar-direita">
+        <span id="nome-p2" class="rotulo-jogador">P2: KEN</span>
+        <div class="barra-vida-externa">
+          <div id="vida-p2" class="barra-vida-interna"></div>
         </div>
       </div>
     </div>
 
     <!-- Tela do Jogo em Canvas -->
-    <canvas id="gameCanvas" width="960" height="540"></canvas>
+    <canvas id="canvasJogo" width="960" height="540"></canvas>
   </div>
 
+  <!-- Scripts JavaScript -->
   <script src="js/Ui.js"></script>
   <script src="js/InputHandler.js"></script>
   <script src="js/Character.js"></script>
