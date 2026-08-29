@@ -1,12 +1,14 @@
 // Objeto que lista o que existe nas pastas
 const CATALOGO_DE_ASSETS = {
     personagens: ["Ruy", "Ken"],
-    cenarios: ["Suzaku-JPN", "Ruinas-THA", "Genbugahara-JPN", "Cachoeira-VNZ", "Blanka-BRA", "Beco-JPN", "Bay-Area-EUA", "Amazonia-BRA"]
+    cenarios: ["Suzaku-JPN", "Ruinas-THA", "Cachoeira-VNZ", "Blanka-BRA", "Beco-JPN", "Bay-Area-EUA", "Amazonia-BRA"]
 };
 
-class UI {
-    // Instancia as referencias para os componentes do HTML e estruturas de dados
-    constructor() {
+class UI{
+    // instancia as referencias para os componentes do HTML e estruturas de dados
+    constructor(main){
+        this.main = main;
+
         this.menu = document.getElementById("tela-menu");
         this.escolhaModo = document.getElementById("seletor-modo");
         this.escolhaP1 = document.getElementById("seletor-p1");
@@ -15,7 +17,6 @@ class UI {
         this.botaoStart = document.getElementById("botao-iniciar");
         this.nomeP1 = document.getElementById("nome-p1");
         this.nomeP2 = document.getElementById("nome-p2");
-        this.canvas = document.getElementById("canvasJogo");
 
         // Objeto vazio que vai guardar as opções do jogo
         this.configuracaoJogo = {
@@ -26,8 +27,8 @@ class UI {
         };
     }
 
-    // Popula com todos os personagens existentes a escolha
-    popularPersonagens(id) {
+    // popula com todos os personagens existentes a escolha
+    popularPersonagens(id){
         CATALOGO_DE_ASSETS.personagens.forEach((item) => {
             const opcao = document.createElement("option");
             opcao.value = item;
@@ -38,8 +39,8 @@ class UI {
         });
     }
 
-    // Popula com todas as escolhas de cenarios possíveis
-    popularCenarios() {
+    // popula com todas as escolhas de cenarios possíveis
+    popularCenarios(){
         CATALOGO_DE_ASSETS.cenarios.forEach((item) => {
             const opcao = document.createElement("option");
             opcao.value = item;
@@ -48,7 +49,7 @@ class UI {
         });
     }
 
-    escutarEventos() {
+    escutarEventos(){
         // Detecta quando o usuário troca a opção no select de modo
         this.escolhaModo.addEventListener("change", () => {
             const containerP2 = this.escolhaP2.parentElement;
@@ -56,60 +57,43 @@ class UI {
                 // Se for contra o PC, esconde a escolha do P2
                 containerP2.style.display = "none";
                 
-                // Sortear P2 caso troque para PVC
+                // Define um valor para o bot se estiver escondido
+                // Gera um número aleatório entre 0 e o tamanho da lista de personagens
                 const indiceAleatorio = Math.floor(Math.random() * CATALOGO_DE_ASSETS.personagens.length);
-                this.escolhaP2.value = CATALOGO_DE_ASSETS.personagens[indiceAleatorio];
+                // Pega o nome do personagem sorteado
+                const personagemSorteado = CATALOGO_DE_ASSETS.personagens[indiceAleatorio]
+
+                // Atribui o valor sorteado ao select do P2
+                this.escolhaP2.value = personagemSorteado;
+                // Atribui a escolha aleatoria na configuração
+                this.configuracaoJogo.p2 = this.escolhaP2.value;
             } else {
                 // Se for PvP, mostra a caixa de seleção do P2 novamente
                 containerP2.style.display = "block";
             }
         });
 
+
         this.botaoStart.addEventListener("click", () => {
             this.configuracaoJogo.modo = this.escolhaModo.value;
             this.configuracaoJogo.p1 = this.escolhaP1.value;
-            
-            // Garante um valor para o P2 se estiver em modo PvC e o select estiver oculto
-            if (this.configuracaoJogo.modo === "pvc" && !this.escolhaP2.value) {
-                const indiceAleatorio = Math.floor(Math.random() * CATALOGO_DE_ASSETS.personagens.length);
-                this.escolhaP2.value = CATALOGO_DE_ASSETS.personagens[indiceAleatorio];
-            }
-
             this.configuracaoJogo.p2 = this.escolhaP2.value;
             this.configuracaoJogo.cenario = this.escolhaCenario.value.toLowerCase();
 
-            this.esconderMenu();
+            this.esconderMenu()
+            this.main.jogar(this.configuracaoJogo);
         });
     }
 
-    mostrarMenu() {
+    mostrarMenu(){
         this.menu.style.display = "flex";
     }
 
-    esconderMenu() {
+    esconderMenu(){
         this.menu.style.display = "none";
-
-        // Atualiza os nomes no HUD (em maiúsculas de forma dinâmica)
+        
+        // Atualiza os nomes no HUD
         this.nomeP1.textContent = `P1: ${this.configuracaoJogo.p1.toUpperCase()}`;
         this.nomeP2.textContent = `${this.configuracaoJogo.p2.toUpperCase()} :P2`;
-
-        // Correção principal: uso do 'this.canvas' no lugar de 'canvas'
-        const ctx = this.canvas.getContext("2d");
-        const imagemCenario = new Image();
-
-        // Certifique-se da extensão das suas imagens (.png ou .webp) e caminho relativo (assets/...)
-        imagemCenario.src = `assets/cenario/${this.configuracaoJogo.cenario}.png`;
-
-        // Desenha no Canvas ao carregar a imagem
-        imagemCenario.onload = () => {
-            ctx.drawImage(imagemCenario, 0, 0, this.canvas.width, this.canvas.height);
-        };
     }
 }
-
-// Execução inicial simples para o commit atual
-const ui = new UI();
-ui.popularPersonagens("seletor-p1");
-ui.popularPersonagens("seletor-p2");
-ui.popularCenarios();
-ui.escutarEventos();
