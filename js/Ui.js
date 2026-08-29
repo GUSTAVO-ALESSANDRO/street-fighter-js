@@ -1,7 +1,7 @@
 // Objeto que lista o que existe nas pastas
 const CATALOGO_DE_ASSETS = {
     personagens: ["Ruy", "Ken"],
-    cenarios: ["Suzaku", "Blanka"]
+    cenarios: ["Suzaku-JPN", "Ruinas-THA", "Genbugahara-JPN", "Cachoeira-VNZ", "Blanka-BRA", "Beco-JPN", "Bay-Area-EUA", "Amazonia-BRA"]
 };
 
 class UI {
@@ -98,7 +98,7 @@ class UI {
         const imagemCenario = new Image();
 
         // Certifique-se da extensão das suas imagens (.png ou .webp) e caminho relativo (assets/...)
-        imagemCenario.src = `assets/cenario/${this.configuracaoJogo.cenario}.webp`;
+        imagemCenario.src = `assets/cenario/${this.configuracaoJogo.cenario}.png`;
 
         // Desenha no Canvas ao carregar a imagem
         imagemCenario.onload = () => {
