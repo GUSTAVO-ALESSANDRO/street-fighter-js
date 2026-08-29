@@ -28,8 +28,8 @@ class Main {
         // Carrega a imagem do cenário selecionado
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
 
-        this.player1 = new Character(100, 270, true);  // true = é o P1
-        this.player2 = new Character(780, 270, false); // false = é o P2
+        this.player1 = new Character(100, 270, true, configuracoes.p1);  // true = é o P1
+        this.player2 = new Character(780, 270, false, configuracoes.p2); // false = é o P2
 
         // Só inicia o loop quando a imagem carregar
         this.imagemCenario.onload = () => {

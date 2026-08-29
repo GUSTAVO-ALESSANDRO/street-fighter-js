@@ -1,11 +1,10 @@
 const ORIENTACAO_PERSONAGEM = {
     direita: ["Ken"],
-    esquerda: ["Ruy"]
+    esquerda: ["Ryu"]
 }
 
-class Character{
-
-    constructor(x, y, ePlayer1) {
+class Character {    
+    constructor(x, y, ePlayer1, nomePersonagem) {
         // Posição na tela
         this.x = x;
         this.y = y;
@@ -17,35 +16,44 @@ class Character{
         // Orientação (se é P1 olha pra direita, se é P2 olha pra esquerda)
         this.ePlayer1 = ePlayer1;
 
+        this.nome = nomePersonagem;
+
         // Velocidade de Movimento
         this.velocidadeX = 0;
         this.velocidadeY = 0;
 
+        // Estado atual para controle de animação (ex: 'parado', 'andar', 'jab')
+        this.estadoAtual = "parado";
+
+        // Objeto de Imagem para a renderização do Sprite
+        this.imagem = new Image();
+        // Exemplo: carrega a imagem de introdução ou estado atual
+        this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}1.png`;
+
         // Hurtbox - Caixa de colisão para tomar dano
         this.hurtbox = {
-            x: this.x,
-            y: this.y,
-            largura: 75,
-            altura: 190
+            x: this.x + 20,
+            y: this.y + 10,
+            largura: 55,
+            altura: 180
         };
     }
 
-    // Exemplo desconexo de como desenhar a Hurtbox para depuração
     draw(ctx) {
-        //Desenha o Retângulo da Hurtbox (vermelho/transparente para debug)
+        // Desenha a imagem do personagem assim que estiver carregada
+        if (this.imagem.complete && this.imagem.naturalWidth !== 0) {
+            ctx.drawImage(this.imagem, this.x, this.y, this.largura, this.altura);
+        }
+
+        // Desenha a Hurtbox por cima (para depuração)
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.hurtbox.x, this.hurtbox.y, this.hurtbox.largura, this.hurtbox.altura);
-
-        // Desenha o personagem no Canvas
-        //ctx.drawImage("assets/personagem/ruy/ruy-intro.png", this.x, this.y, this.largura, this.altura);
     }
 
     update() {
-        // Aplica o movimento na posição do personagem
         this.x += this.velocidadeX;
         this.y += this.velocidadeY;
 
-        // Atualiza a Hurtbox junto com o personagem
         this.hurtbox.x = this.x + 20;
         this.hurtbox.y = this.y + 10;
     }

@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Street Figther Lite</title>
+  <title>Street Fighter Lite</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <div id="tela-menu" class="modal-menu">
     <div class="caixa-menu">
-      <h1>Street Figther Lite</h1>
-
+      <h1>Street Fighter Lite</h1>
+      
       <div class="grupo-campo">
         <label for="seletor-modo">Modo de Jogo:</label>
         <select id="seletor-modo">
@@ -23,13 +23,13 @@
       <!-- Escolha dos Lutadores -->
       <div class="grupo-campo campos-em-linha">
         <div>
-          <label for="seletor-p1">Lutador P1:</label>
+          <label for="seletor-p1">Jogador 1:</label>
           <select id="seletor-p1">
             <!-- Personagens colocados dinamicamente pelo js -->
           </select>
         </div>
         <div>
-          <label for="seletor-p2">Lutador P2 / PC:</label>
+          <label for="seletor-p2">Jogador 2:</label>
           <select id="seletor-p2">
             <!-- Personagens colocados dinamicamente pelo js -->
           </select>
@@ -51,18 +51,18 @@
   <div id="container-jogo">
     <div id="painel-hud">
       <div class="hud-jogador">
-        <span id="nome-p1" class="rotulo-jogador">P1:</span>
+        <p id="nome-p1" class="rotulo-jogador">P1:</p>
         <div class="barra-vida-externa">
           <div id="vida-p1" class="barra-vida-interna"></div>
         </div>
       </div>
 
       <div class="caixa-temporizador">
-        <span id="tempo-jogo">99</span>
+        <p id="tempo-jogo">99</p>
       </div>
 
       <div class="hud-jogador alinhar-direita">
-        <span id="nome-p2" class="rotulo-jogador">P2:</span>
+        <p id="nome-p2" class="rotulo-jogador">:P2</p>
         <div class="barra-vida-externa">
           <div id="vida-p2" class="barra-vida-interna"></div>
         </div>
