@@ -5,6 +5,9 @@ class Main {
         
         this.imagemCenario = new Image();
         this.jogoRodando = false;
+
+        this.player1 = null;
+        this.player2 = null;
     }
 
     iniciar(){
@@ -24,6 +27,9 @@ class Main {
     jogar(configuracoes) {
         // Carrega a imagem do cenário selecionado
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
+
+        this.player1 = new Character(100, 270, true);  // true = é o P1
+        this.player2 = new Character(780, 270, false); // false = é o P2
 
         // Só inicia o loop quando a imagem carregar
         this.imagemCenario.onload = () => {
@@ -45,7 +51,8 @@ class Main {
     }
 
     update() {
-        // Reservado para lógica de física, comandos e movimento
+        if (this.player1) this.player1.update();
+        if (this.player2) this.player2.update();
     }
 
     draw() {
@@ -54,6 +61,10 @@ class Main {
 
         // Desenha o fundo cobrindo todo o Canvas
         this.ctx.drawImage(this.imagemCenario, 0, 0, this.canvas.width, this.canvas.height);
+
+        // Desenha os personagens por cima do fundo
+        if (this.player1) this.player1.draw(this.ctx);
+        if (this.player2) this.player2.draw(this.ctx);
     }
 }
 
