@@ -1,0 +1,181 @@
+:root {
+  --bg-dark: #121212;
+  --panel-bg: rgba(20, 20, 20, 0.9);
+  --life-green: #2ecc71;
+  --life-bg: #555;
+  --yellow-accent: #f1c40f;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* --- TELA 1: MENU DE SELEÇÃO --- */
+.overlay-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.menu-box {
+  background-color: var(--panel-bg);
+  border: 3px solid var(--yellow-accent);
+  padding: 30px;
+  border-radius: 8px;
+  width: 400px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+}
+
+.menu-box h1 {
+  font-size: 24px;
+  color: var(--yellow-accent);
+  margin-bottom: 20px;
+}
+
+.field-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.field-group label {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.field-group select {
+  width: 100%;
+  padding: 8px;
+  background-color: #222;
+  color: #fff;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.inline-fields {
+  display: flex;
+  gap: 10px;
+}
+
+.inline-fields > div {
+  flex: 1;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--yellow-accent);
+  color: #000;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.btn:hover {
+  background-color: #d4ac0d;
+}
+
+/* ÁREA DO CANVAS E HUD*/
+#game-container {
+  position: relative;
+  width: 960px;
+  height: 540px;
+  border: 2px solid #333;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+#gameCanvas {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#hud {
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.player-hud {
+  width: 380px;
+}
+
+.player-hud.align-right {
+  text-align: right;
+}
+
+.player-label {
+  color: #fff;
+  font-weight: bold;
+  font-size: 16px;
+  text-shadow: 2px 2px 4px #000;
+}
+
+.life-bar-outer {
+  width: 100%;
+  height: 22px;
+  background-color: var(--life-bg);
+  border: 2px solid #fff;
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.life-bar-inner {
+  width: 100%;
+  height: 100%;
+  background-color: var(--life-green);
+  transition: width 0.2s ease-out;
+}
+
+.align-right .life-bar-inner {
+  margin-left: auto;
+}
+
+.timer-box {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--yellow-accent);
+  color: var(--yellow-accent);
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
