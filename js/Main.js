@@ -58,18 +58,25 @@ class Main {
     }
 
     update() {
-        if (this.player1) this.player1.update(this.input.teclas, this.player2);
+        // Se a partida acabou, atualiza apenas as animações de fim de jogo
+        if (this.player1.vida <= 0 || this.player2.vida <= 0) {
+            this.player1.atualizarVitoriaDerrota();
+            this.player2.atualizarVitoriaDerrota();
+        } else {
+        // Lógica normal de movimentação e combate enquanto o jogo roda
+            if (this.player1) this.player1.update(this.input.teclas, this.player2);
 
-        if (this.player2) {
-            // Se for o modo "pvc", envia um objeto com todas as entradas falsas
-            const entradasP2 = (this.configuracoes.modo === "pvc") ? {} : this.input.teclas;
-            
-            this.player2.update(entradasP2, this.player1);
-        }
+            if (this.player2) {
+                // Se for o modo "pvc", envia um objeto com todas as entradas falsas
+                const entradasP2 = (this.configuracoes.modo === "pvc") ? {} : this.input.teclas;
+                
+                this.player2.update(entradasP2, this.player1);
+            }
 
-        // Checa colisões depois de atualizar os dois personagens
-        if (this.player1 && this.player2) {
-            this.checarAtaques();
+            // Checa colisões depois de atualizar os dois personagens
+            if (this.player1 && this.player2) {
+                this.checarAtaques();
+            }
         }
     }
 

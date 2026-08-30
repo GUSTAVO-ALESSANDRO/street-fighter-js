@@ -44,6 +44,7 @@ class Character {
         this.contImg = 0;
         this.contAgachar = 0;
         this.derrotaImg = 0;
+        this.frameFimJogo = 0;
 
         // Carrega a imagem inicial do personagem
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
@@ -481,9 +482,28 @@ class Character {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-${sulfixoSprite}.png`;
         }
 
-        // Se a vida zerar, aciona animação de derrota
-        if (this.vida === 0) {
-            this.derrota();
+    }
+
+    atualizarVitoriaDerrota() {
+        if (this.vida <= 0) {
+            this.frameFimJogo++;
+
+            if (this.frameFimJogo <= 20) {
+                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat1.png`;
+            } else if (this.frameFimJogo <= 40) {
+                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat2.png`;
+            } else {
+                // Congela no defeat3 para sempre
+                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat3.png`;
+            }
+        } else {
+            this.frameFimJogo++;
+
+            if (this.frameFimJogo % 80 == 0) {
+                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory1.png`;
+            } else if (this.frameFimJogo % 80 == 40){
+                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory2.png`;
+            }
         }
     }
 }
