@@ -314,12 +314,12 @@ class Character {
 
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab1.png`;
 
-        const offsetX = this.olhandoParaEsquerda ? -120 : this.largura + 60;
+        const offsetX = this.olhandoParaEsquerda ? -120 : this.largura + 20;
 
         this.hitbox = {
             x: this.x + offsetX,
             y: this.y + 25,
-            largura: 60,
+            largura: 100,
             altura: 30,
             jaAcertou: false
         };
@@ -355,8 +355,8 @@ class Character {
         this.hitbox = {
             x: this.x + offsetX,
             y: this.y + 140,
-            largura: 70,
-            altura: 40,
+            largura: 75,
+            altura: 32,
             jaAcertou: false
         };
 
@@ -473,7 +473,7 @@ class Character {
 
         // Ativa o estado de Hitstun por 10 frames
         this.tomandoDano = true;
-        this.tempoHitstun = 10;
+        this.tempoHitstun = 20;
 
         // Se não estiver agachado, troca a imagem para a animação de impacto
         if (this.estadoAtual !== "agachado") {
