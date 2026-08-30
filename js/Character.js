@@ -196,7 +196,7 @@ class Character {
         let larguraHurtbox = 70;
         let alturaHurtbox = 190;
         let offsetY = 5;
-        let offsetX = 18;
+        let offsetX = 20;
 
         if (this.estadoAtual === "agachado") {
             larguraHurtbox = 85;
@@ -363,7 +363,7 @@ class Character {
         this.contAgachar++;
 
         if (this.contAgachar <= 10) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic2.png`;
         } else {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-guard.png`;
         }
