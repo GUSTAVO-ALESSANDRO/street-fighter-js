@@ -199,10 +199,10 @@ class Character {
         let offsetX = 18;
 
         if (this.estadoAtual === "agachado") {
-            larguraHurtbox = 80;
+            larguraHurtbox = 85;
             alturaHurtbox = 130;
             offsetY = 70;
-            offsetX = 5;
+            offsetX = 8;
         }
 
         // Centraliza a Hurtbox no corpo
@@ -295,11 +295,11 @@ class Character {
 
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab1.png`;
 
-        const offsetX = this.olhandoParaEsquerda ? -45 : this.largura - 10;
+        const offsetX = this.olhandoParaEsquerda ? -120 : this.largura + 60;
 
         this.hitbox = {
             x: this.x + offsetX,
-            y: this.y + 35,
+            y: this.y + 25,
             largura: 60,
             altura: 30
         };
@@ -330,11 +330,11 @@ class Character {
 
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short1.png`;
 
-        const offsetX = this.olhandoParaEsquerda ? -55 : this.largura - 10;
+        const offsetX = this.olhandoParaEsquerda ? -115 : this.largura + 45;
 
         this.hitbox = {
             x: this.x + offsetX,
-            y: this.y + 100,
+            y: this.y + 140,
             largura: 70,
             altura: 40
         };
