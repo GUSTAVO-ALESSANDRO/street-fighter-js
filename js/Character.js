@@ -72,6 +72,9 @@ class Character {
         this.duracaoAtaque = 220;
         this.atacando = false;
         this.tipoAtaque = ""; // "jab" ou "chute"
+
+        this.vidaMaxima = 100;
+        this.vida = 100;
     }
 
     draw(ctx) {
@@ -128,6 +131,22 @@ class Character {
     }
 
     update(teclas, oponente) {
+        // Se estiver em tomando dano impede novas ações
+        if (this.tomandoDano) {
+            this.velocidadeX = 0; // Não move enquanto apanha
+            this.tempoHitstun--;
+            if (this.tempoHitstun <= 0) {
+                this.tomandoDano = false;
+            } else {
+                // Atualiza gravidade e posição caso apanhe no ar, depois interrompe
+                this.aplicarGravidade(false);
+                this.x += this.velocidadeX;
+                this.y += this.velocidadeY;
+                this.limitarTela(960);
+                return;
+            }
+        }
+
         if (!teclas) return;
 
         // Atualiza a orientação com base na posição do oponente
@@ -301,7 +320,8 @@ class Character {
             x: this.x + offsetX,
             y: this.y + 25,
             largura: 60,
-            altura: 30
+            altura: 30,
+            jaAcertou: false
         };
 
         setTimeout(() => {
@@ -336,7 +356,8 @@ class Character {
             x: this.x + offsetX,
             y: this.y + 140,
             largura: 70,
-            altura: 40
+            altura: 40,
+            jaAcertou: false
         };
 
         setTimeout(() => {
@@ -430,6 +451,39 @@ class Character {
         }
         if (this.x > limiteCanvas - this.largura) {
             this.x = limiteCanvas - this.largura;
+        }
+    }
+
+    tomarDano(quantidade, tipoAtaque) {
+        if (this.vida <= 0) return;
+
+        // Cancela imediatamente qualquer ataque e limpa a hitbox ativa
+        this.atacando = false;
+        this.hitbox = null;
+        this.tipoAtaque = "";
+
+        // Se estiver agachado, reduz o dano para 1/3
+        let danoFinal = quantidade;
+        if (this.estadoAtual === "agachado") {
+            danoFinal = Math.floor(quantidade / 3);
+        }
+
+        // Aplica o danoFinal correto na vida
+        this.vida = Math.max(0, this.vida - danoFinal);
+
+        // Ativa o estado de Hitstun por 10 frames
+        this.tomandoDano = true;
+        this.tempoHitstun = 10;
+
+        // Se não estiver agachado, troca a imagem para a animação de impacto
+        if (this.estadoAtual !== "agachado") {
+            const sulfixoSprite = (tipoAtaque === "jab") ? "punched-jab" : "punched-short";
+            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-${sulfixoSprite}.png`;
+        }
+
+        // Se a vida zerar, aciona animação de derrota
+        if (this.vida === 0) {
+            this.derrota();
         }
     }
 }

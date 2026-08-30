@@ -36,6 +36,8 @@ class Main {
         this.player1 = new Character(100, 270, true, configuracoes.p1);  // true = é o P1
         this.player2 = new Character(780, 270, false, configuracoes.p2); // false = é o P2
 
+        this.atualizarHUD();
+
         // Só inicia o loop quando a imagem carregar
         this.imagemCenario.onload = () => {
             this.jogoRodando = true;
@@ -84,20 +86,26 @@ class Main {
     }
 
     checarAtaques() {
-        // Verifica se o Golpe do P1 acertou o P2
+        // Verifica golpe do P1 no P2
         if (this.colidir(this.player1, this.player2)) {
-            // P2 toma dano
+            this.player1.hitbox.jaAcertou = true; // Marca como processado
+            const dano = (this.player1.tipoAtaque === "jab") ? 6 : 8;
+            this.player2.tomarDano(dano, this.player1.tipoAtaque);
+            this.atualizarHUD();
         }
 
-        // Verifica se o Golpe do P2 acertou o P1
+        // Verifica golpe do P2 no P1
         if (this.colidir(this.player2, this.player1)) {
-            // P1 toma dano
+            this.player2.hitbox.jaAcertou = true; // Marca como processado
+            const dano = (this.player2.tipoAtaque === "jab") ? 6 : 8;
+            this.player1.tomarDano(dano, this.player2.tipoAtaque);
+            this.atualizarHUD();
         }
     }
 
     colidir(atacante, defensor) {
-        // Se quem ataca não está com uma hitbox ativa, ignora
-        if (!atacante.hitbox) return false;
+        // Se não houver hitbox ativa ou se ela já registrou o acerto, ignora
+        if (!atacante.hitbox || atacante.hitbox.jaAcertou) return false;
 
         const hit = atacante.hitbox;
         const hurt = defensor.hurtbox;
@@ -108,6 +116,21 @@ class Main {
             hit.y < hurt.y + hurt.altura &&
             hit.y + hit.altura > hurt.y
         );
+    }
+
+    atualizarHUD() {
+        const barraP1 = document.getElementById("vida-p1");
+        const barraP2 = document.getElementById("vida-p2");
+
+        if (barraP1 && this.player1) {
+            const porc1 = (this.player1.vida / this.player1.vidaMaxima) * 100;
+            barraP1.style.width = `${porc1}%`;
+        }
+
+        if (barraP2 && this.player2) {
+            const porc2 = (this.player2.vida / this.player2.vidaMaxima) * 100;
+            barraP2.style.width = `${porc2}%`;
+        }
     }
 }
 
