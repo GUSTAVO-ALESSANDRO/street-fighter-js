@@ -40,7 +40,7 @@ class Character {
         this.contImg = 0;
 
         // carrega a imagem de introdução ou estado atual
-        this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}1.png`;
+        this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-basic.png`;
 
         // orientação do personagem
         this.olhandoParaEsquerda = !ePlayer1;
@@ -58,7 +58,9 @@ class Character {
         this.teclaJabLiberada = true;
         this.teclaChuteLiberada = true;
         // Tempo em milissegundos entre ataques
-        this.tempoCooldownAtaque = 300;
+        this.tempoCooldownAtaque = 320;
+        this.duracaoAtaque = 200;
+        this.atacando = false;
     }
 
     draw(ctx) {
@@ -111,7 +113,9 @@ class Character {
 
         // se agaxar trava todo o movimento
         if (teclaBaixo && this.estaNoChao) {
+            this.velocidadeX = 0; // Para o movimento horizontal
             this.agaixar();
+            return; // TRAVA todo o resto das ações enquanto estiver agachado
         } 
         else {
             if (teclaDireita) {
@@ -159,6 +163,10 @@ class Character {
     parado(){
         this.contImg +=1;
         this.velocidadeX = 0;
+
+        // Não troca a imagem se estiver no ar ou atacando
+        if (!this.estaNoChao || this.atacando) return;
+
         if(this.contImg % 40 == 0){
             this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}1.png`;
         } else if (this.contImg % 40 == 12){
@@ -171,6 +179,10 @@ class Character {
     andarFrente(){
         this.contImg +=1;
         this.velocidadeX = 5;
+
+        // Não troca a imagem se estiver no ar ou atacando
+        if (!this.estaNoChao || this.atacando) return;
+
         if(this.contImg % 20 == 0){
             this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-front.png`;
         } else if(this.contImg % 20 == 10){
@@ -181,6 +193,10 @@ class Character {
     andarTras(){
         this.contImg +=1;
         this.velocidadeX = -5;
+
+        // Não troca a imagem se estiver no ar ou atacando
+        if (!this.estaNoChao || this.atacando) return;
+
         if(this.contImg % 20 == 0){
             this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-late.png`;
         } else if(this.contImg % 20 == 10){
@@ -192,26 +208,40 @@ class Character {
         if (!this.podeAtacar) return;
 
         this.podeAtacar = false;
+        this.atacando = true;
         this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-jab2.png`;
 
-        // Reseta o ataque após o tempo do cooldown
+        // Finaliza a imagem e a ação do golpe
+        setTimeout(() => {
+            this.atacando = false; 
+        }, this.duracaoAtaque);
+
+        // Libera o jogador para bater novamente
         setTimeout(() => {
             this.podeAtacar = true;
-        }, this.tempoCooldownAtaque);
+        }, this.duracaoAtaque + this.tempoCooldownAtaque);
     }
 
     chute() {
         if (!this.podeAtacar) return;
 
         this.podeAtacar = false;
+        this.atacando = true;
         this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-short2.png`;
 
+        // Finaliza a imagem e a ação do golpe
+        setTimeout(() => {
+            this.atacando = false; 
+        }, this.duracaoAtaque);
+
+        // Libera o jogador para bater novamente
         setTimeout(() => {
             this.podeAtacar = true;
-        }, this.tempoCooldownAtaque);
+        }, this.duracaoAtaque + this.tempoCooldownAtaque);
     }
 
     agaixar(){
+        if (this.atacando) return;
         this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-guard.png`;
     }
 
@@ -233,10 +263,12 @@ class Character {
         if (!this.estaNoChao) {
             this.velocidadeY += this.gravidade;
 
-            if(this.velocidadeY < 0){
-                this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-jump-up.png`;
-            } else{
-                this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-jump-down.png`;
+            if (!this.atacando) {
+                if(this.velocidadeY < 0){
+                    this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-jump-up.png`;
+                } else{
+                    this.imagem.src = `assets/personagem/${this.nome.toLowerCase()}/${this.nome.toLowerCase()}-jump-down.png`;
+                }
             }
         }
 
