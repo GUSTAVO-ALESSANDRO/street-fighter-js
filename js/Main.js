@@ -64,6 +64,11 @@ class Main {
             
             this.player2.update(entradasP2, this.player1);
         }
+
+        // Checa colisões depois de atualizar os dois personagens
+        if (this.player1 && this.player2) {
+            this.checarAtaques();
+        }
     }
 
     draw() {
@@ -76,6 +81,33 @@ class Main {
         // Desenha os personagens por cima do fundo
         if (this.player1) this.player1.draw(this.ctx);
         if (this.player2) this.player2.draw(this.ctx);
+    }
+
+    checarAtaques() {
+        // Verifica se o Golpe do P1 acertou o P2
+        if (this.colidir(this.player1, this.player2)) {
+            // P2 toma dano
+        }
+
+        // Verifica se o Golpe do P2 acertou o P1
+        if (this.colidir(this.player2, this.player1)) {
+            // P1 toma dano
+        }
+    }
+
+    colidir(atacante, defensor) {
+        // Se quem ataca não está com uma hitbox ativa, ignora
+        if (!atacante.hitbox) return false;
+
+        const hit = atacante.hitbox;
+        const hurt = defensor.hurtbox;
+
+        return (
+            hit.x < hurt.x + hurt.largura &&
+            hit.x + hit.largura > hurt.x &&
+            hit.y < hurt.y + hurt.altura &&
+            hit.y + hit.altura > hurt.y
+        );
     }
 }
 

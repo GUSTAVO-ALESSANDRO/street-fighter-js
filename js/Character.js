@@ -53,6 +53,8 @@ class Character {
             largura: 55,
             altura: 180
         };
+        // Hitbox - caixa para causar dano
+        this.hitbox = null;
 
         this.teclaPuloLiberada = true;
         this.podeAtacar = true;
@@ -85,6 +87,13 @@ class Character {
         // Desenha a Hurtbox por cima (para depuração)
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.hurtbox.x, this.hurtbox.y, this.hurtbox.largura, this.hurtbox.altura);
+
+        // Desenha a Hitbox em AZUL ( para depuração)
+        if (this.hitbox) {
+            ctx.strokeStyle = "blue";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.largura, this.hitbox.altura);
+        }
     }
 
     update(teclas, oponente) {
@@ -230,6 +239,17 @@ class Character {
         // Início do soco
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab1.png`;
 
+        // Calcula a posição da Hitbox de acordo com a direção
+        const offsetX = this.olhandoParaEsquerda ? -60 : this.largura - 10;
+
+        // Hitbox do Jab
+        this.hitbox = {
+            x: this.x + offsetX,
+            y: this.y + 30,
+            largura: 50,
+            altura: 30
+        };
+
         // Extensão do soco (após 1/10 da duração)
         setTimeout(() => {
             if (this.atacando) {
@@ -240,6 +260,7 @@ class Character {
         // Fim da Animação do Golpe
         setTimeout(() => {
             this.atacando = false; 
+            this.hitbox = null; // Apaga a hitbox;
         }, this.duracaoAtaque);
 
         // Libera o Cooldown para o próximo ataque
@@ -257,6 +278,17 @@ class Character {
         // Início do chute
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short1.png`;
 
+        // Calcula a posição da Hitbox de acordo com a direção
+        const offsetX = this.olhandoParaEsquerda ? -40 : this.largura - 10;
+
+        // Hitbox do Chute
+        this.hitbox = {
+            x: this.x + offsetX,
+            y: this.y + 110,
+            largura: 70,
+            altura: 40
+        };
+
         // Extensão do chute (após 1/3 da duração)
         setTimeout(() => {
             if (this.atacando) {
@@ -267,6 +299,7 @@ class Character {
         // Fim da Animação do Golpe
         setTimeout(() => {
             this.atacando = false; 
+            this.hitbox = null; //Apaga a hitbox
         }, this.duracaoAtaque);
 
         // Libera o Cooldown para o próximo ataque
