@@ -1,7 +1,7 @@
 const ORIENTACAO_PERSONAGEM = {
     direita: ["Ken"],
-    esquerda: ["Ruy"]
-}
+    esquerda: ["Ryu"]
+};
 
 class Character {    
     constructor(x, y, ePlayer1, nomePersonagem) {
@@ -11,9 +11,13 @@ class Character {
 
         this.chao = y;
         
-        // Dimensões do desenho
+        // Dimensões padrão do corpo/colisão
         this.largura = 100;
         this.altura = 200;
+
+        // Altura alvo proporcional na tela
+        this.alturaAlvo = 200; 
+        this.alturaBaseSprite = 0;
 
         // Orientação (se é P1 olha pra direita, se é P2 olha pra esquerda)
         this.ePlayer1 = ePlayer1;
@@ -30,20 +34,21 @@ class Character {
         this.gravidade = 0.5;
         this.estaNoChao = true;
 
-        // Controle de Animações
-        this.estadoAtual = "parado"; // Estado atual para controle de animação (ex: 'parado', 'andar', 'jab')
+        // Controle de Animações e Estados
+        this.estadoAtual = "parado"; // 'parado', 'agachado', 'andar', etc.
 
         // Objeto de Imagem para a renderização do Sprite
         this.imagem = new Image();
 
-        //Contador da imagem
+        // Contadores da animação
         this.contImg = 0;
+        this.contAgachar = 0;
         this.derrotaImg = 0;
 
-        // carrega a imagem de introdução ou estado atual
+        // Carrega a imagem inicial do personagem
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
 
-        // orientação do personagem
+        // Orientação do personagem
         this.olhandoParaEsquerda = !ePlayer1;
 
         // Hurtbox - Caixa de colisão para tomar dano
@@ -53,32 +58,58 @@ class Character {
             largura: 55,
             altura: 180
         };
-        // Hitbox - caixa para causar dano
+
+        // Hitbox - Caixa para causar dano
         this.hitbox = null;
 
         this.teclaPuloLiberada = true;
         this.podeAtacar = true;
         this.teclaJabLiberada = true;
         this.teclaChuteLiberada = true;
+
         // Tempo em milissegundos entre ataques
         this.tempoCooldownAtaque = 300;
         this.duracaoAtaque = 220;
         this.atacando = false;
+        this.tipoAtaque = ""; // "jab" ou "chute"
     }
 
     draw(ctx) {
         if (this.imagem.complete && this.imagem.naturalWidth !== 0) {
             ctx.save(); // Salva o estado atual do Canvas
 
+            // Captura a altura da imagem básica em pé como referência de escala
+            if (this.alturaBaseSprite === 0 || this.imagem.src.includes("-basic")) {
+                this.alturaBaseSprite = this.imagem.naturalHeight;
+            }
+
+            // Calcula a escala para que a imagem base tenha exatamente a alturaAlvo
+            const escala = this.alturaAlvo / (this.alturaBaseSprite || this.imagem.naturalHeight);
+            const larguraRender = this.imagem.naturalWidth * escala;
+            const alturaRender = this.imagem.naturalHeight * escala;
+
+            // Alinha a base da imagem exatamente na linha do chão (evita flutuar)
+            const desenharY = (this.y + this.altura) - alturaRender;
+
             const precisaEspelhar = (this.olhandoParaEsquerda && this.orientacaoNativa === "direita") ||
                                     (!this.olhandoParaEsquerda && this.orientacaoNativa === "esquerda");
 
+            // Ajuste X para alinhar o corpo e evitar que o imagem vá para trás no ataque devido ao aumento do PNG
+            let desenharX = this.x;
+            const diferencaLargura = larguraRender - this.largura;
+
+            if (diferencaLargura > 0) {
+                if (this.olhandoParaEsquerda) {
+                    desenharX -= diferencaLargura;
+                }
+            }
+
             if (precisaEspelhar) {
-                ctx.translate(this.x + this.largura, this.y);
+                ctx.translate(desenharX + larguraRender, desenharY);
                 ctx.scale(-1, 1);
-                ctx.drawImage(this.imagem, 0, 0, this.largura, this.altura);
+                ctx.drawImage(this.imagem, 0, 0, larguraRender, alturaRender);
             } else {
-                ctx.drawImage(this.imagem, this.x, this.y, this.largura, this.altura);
+                ctx.drawImage(this.imagem, desenharX, desenharY, larguraRender, alturaRender);
             }
 
             ctx.restore(); // Restaura o Canvas ao estado original
@@ -88,7 +119,7 @@ class Character {
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.hurtbox.x, this.hurtbox.y, this.hurtbox.largura, this.hurtbox.altura);
 
-        // Desenha a Hitbox em AZUL ( para depuração)
+        // Desenha a Hitbox em AZUL (para depuração)
         if (this.hitbox) {
             ctx.strokeStyle = "blue";
             ctx.lineWidth = 2;
@@ -101,7 +132,6 @@ class Character {
 
         // Atualiza a orientação com base na posição do oponente
         if (oponente) {
-            // Se a minha posição X for maior que a do oponente, devo olhar para a esquerda
             this.olhandoParaEsquerda = this.x > oponente.x;
         }
 
@@ -113,7 +143,7 @@ class Character {
         const teclaJab      = this.ePlayer1 ? teclas.p1_jab      : teclas.p2_jab;
         const teclaChute    = this.ePlayer1 ? teclas.p1_chute    : teclas.p2_chute;
 
-        // Libera as teclas de ataque depois do jogador solta-las
+        // Libera as teclas de ataque depois do jogador soltá-las
         if (!teclaJab) {
             this.teclaJabLiberada = true;
         }
@@ -121,13 +151,16 @@ class Character {
             this.teclaChuteLiberada = true;
         }
 
-        // se agaxar trava todo o movimento
+        // Se agachar trava o movimento horizontal e processa o agachamento
         if (teclaBaixo && this.estaNoChao) {
-            this.velocidadeX = 0; // Para o movimento horizontal
+            this.velocidadeX = 0;
             this.agaixar();
-            return; // TRAVA todo o resto das ações enquanto estiver agachado
         } 
         else {
+            // Se soltou a tecla de baixo, reseta o contador de agachar
+            this.contAgachar = 0;
+            this.estadoAtual = "parado";
+
             if (teclaDireita) {
                 this.andarFrente();
             } else if (teclaEsquerda) {
@@ -141,12 +174,11 @@ class Character {
             }
 
             if (teclaJab && this.teclaJabLiberada) {
-                this.teclaJabLiberada = false; // Trava até o jogador soltar o botão
+                this.teclaJabLiberada = false;
                 this.jab();
             } 
-
             else if (teclaChute && this.teclaChuteLiberada) {
-                this.teclaChuteLiberada = false; // Trava até o jogador soltar o botão
+                this.teclaChuteLiberada = false;
                 this.chute();
             }
         }
@@ -160,8 +192,35 @@ class Character {
         // Impede o personagem de sair da tela
         this.limitarTela(960);
 
-        this.hurtbox.x = this.x + 20;
-        this.hurtbox.y = this.y + 10;
+        // Define a largura, altura e offsets da Hurtbox conforme o estado
+        let larguraHurtbox = 70;
+        let alturaHurtbox = 190;
+        let offsetY = 5;
+        let offsetX = 18;
+
+        if (this.estadoAtual === "agachado") {
+            larguraHurtbox = 80;
+            alturaHurtbox = 130;
+            offsetY = 70;
+            offsetX = 5;
+        }
+
+        // Centraliza a Hurtbox no corpo
+        let folgaX = (this.largura - larguraHurtbox) / 2;
+
+        // Aplica o offsetX respeitando para onde o personagem está olhando
+        folgaX += this.olhandoParaEsquerda ? -offsetX : offsetX;
+
+        // Se estiver atacando, inclina levemente a Hurtbox na direção do golpe
+        if (this.atacando) {
+            folgaX += this.olhandoParaEsquerda ? -15 : 15;
+        }
+
+        // Aplica as coordenadas para simetria
+        this.hurtbox.x = this.x + folgaX;
+        this.hurtbox.y = this.y + offsetY;
+        this.hurtbox.largura = larguraHurtbox;
+        this.hurtbox.altura = alturaHurtbox;
     }
 
     // Retorna 'direita' se o nome estiver na lista de direita, senão 'esquerda'
@@ -170,61 +229,58 @@ class Character {
         return olhaParaDireita ? "direita" : "esquerda";
     }
 
-    parado(){
-        this.contImg +=1;
+    parado() {
+        this.contImg += 1;
         this.velocidadeX = 0;
 
-        // Não troca a imagem se estiver no ar ou atacando
         if (!this.estaNoChao || this.atacando) return;
 
-        if(this.contImg % 40 == 0){
+        if (this.contImg % 40 == 0) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}1.png`;
-        } else if (this.contImg % 40 == 12){
+        } else if (this.contImg % 40 == 12) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}2.png`;
-        } else if (this.contImg % 40 == 25){
+        } else if (this.contImg % 40 == 25) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}3.png`;
         }
     }
 
-    andarFrente(){
-        this.contImg +=1;
+    andarFrente() {
+        this.contImg += 1;
         this.velocidadeX = 5;
 
-        // Não troca a imagem se estiver no ar ou atacando
         if (!this.estaNoChao || this.atacando) return;
 
-        if(this.ePlayer1){
-            if(this.contImg % 20 == 0){
+        if (this.ePlayer1) {
+            if (this.contImg % 20 == 0) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
-            } else if(this.contImg % 20 == 10){
+            } else if (this.contImg % 20 == 10) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-front.png`;
             }
         } else {
-            if(this.contImg % 20 == 0){
+            if (this.contImg % 20 == 0) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
-            } else if(this.contImg % 20 == 10){
+            } else if (this.contImg % 20 == 10) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-late.png`;
             }
         }
     }
 
-    andarTras(){
-        this.contImg +=1;
+    andarTras() {
+        this.contImg += 1;
         this.velocidadeX = -5;
 
-        // Não troca a imagem se estiver no ar ou atacando
         if (!this.estaNoChao || this.atacando) return;
 
-        if(this.ePlayer1){
-            if(this.contImg % 20 == 0){
+        if (this.ePlayer1) {
+            if (this.contImg % 20 == 0) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
-            } else if(this.contImg % 20 == 10){
+            } else if (this.contImg % 20 == 10) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-late.png`;
             }
         } else {
-            if(this.contImg % 20 == 0){
+            if (this.contImg % 20 == 0) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
-            } else if(this.contImg % 20 == 10){
+            } else if (this.contImg % 20 == 10) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-front.png`;
             }
         }
@@ -235,35 +291,31 @@ class Character {
 
         this.podeAtacar = false;
         this.atacando = true;
+        this.tipoAtaque = "jab";
 
-        // Início do soco
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab1.png`;
 
-        // Calcula a posição da Hitbox de acordo com a direção
-        const offsetX = this.olhandoParaEsquerda ? -60 : this.largura - 10;
+        const offsetX = this.olhandoParaEsquerda ? -45 : this.largura - 10;
 
-        // Hitbox do Jab
         this.hitbox = {
             x: this.x + offsetX,
-            y: this.y + 30,
-            largura: 50,
+            y: this.y + 35,
+            largura: 60,
             altura: 30
         };
 
-        // Extensão do soco (após 1/10 da duração)
         setTimeout(() => {
             if (this.atacando) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab2.png`;
             }
         }, this.duracaoAtaque / 10);
 
-        // Fim da Animação do Golpe
         setTimeout(() => {
             this.atacando = false; 
-            this.hitbox = null; // Apaga a hitbox;
+            this.tipoAtaque = "";
+            this.hitbox = null;
         }, this.duracaoAtaque);
 
-        // Libera o Cooldown para o próximo ataque
         setTimeout(() => {
             this.podeAtacar = true;
         }, this.duracaoAtaque + this.tempoCooldownAtaque);
@@ -274,59 +326,53 @@ class Character {
 
         this.podeAtacar = false;
         this.atacando = true;
+        this.tipoAtaque = "chute";
 
-        // Início do chute
         this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short1.png`;
 
-        // Calcula a posição da Hitbox de acordo com a direção
-        const offsetX = this.olhandoParaEsquerda ? -40 : this.largura - 10;
+        const offsetX = this.olhandoParaEsquerda ? -55 : this.largura - 10;
 
-        // Hitbox do Chute
         this.hitbox = {
             x: this.x + offsetX,
-            y: this.y + 110,
+            y: this.y + 100,
             largura: 70,
             altura: 40
         };
 
-        // Extensão do chute (após 1/3 da duração)
         setTimeout(() => {
             if (this.atacando) {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short2.png`;
             }
         }, this.duracaoAtaque / 3);
 
-        // Fim da Animação do Golpe
         setTimeout(() => {
             this.atacando = false; 
-            this.hitbox = null; //Apaga a hitbox
+            this.tipoAtaque = "";
+            this.hitbox = null;
         }, this.duracaoAtaque);
 
-        // Libera o Cooldown para o próximo ataque
         setTimeout(() => {
             this.podeAtacar = true;
         }, this.duracaoAtaque + this.tempoCooldownAtaque);
     }
 
-    agaixar(){
+    agaixar() {
         if (this.atacando) return;
 
-        this.contImg++;
+        this.estadoAtual = "agachado";
+        this.contAgachar++;
 
-        if(this.contImg % 40 == 0){
+        if (this.contAgachar <= 10) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
-        } else if (this.contImg % 40 == 10){
+        } else {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-guard.png`;
         }
     }
 
-
     pular() {
-        // Só pula se estiver no chão E se o jogador tiver soltado e apertado a tecla novamente
         if (this.estaNoChao && this.teclaPuloLiberada) {
             this.velocidadeY = this.forcaPulo;
             this.estaNoChao = false;
-            // Trava até soltar a tecla
             this.teclaPuloLiberada = false;
 
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-up.png`;
@@ -334,64 +380,56 @@ class Character {
     }
 
     aplicarGravidade(teclaCima) {
-        // Se o personagem estiver no ar, a gravidade atua puxando-o para baixo
         if (!this.estaNoChao) {
             this.velocidadeY += this.gravidade;
 
             if (!this.atacando) {
-                if(this.velocidadeY < 0){
+                if (this.velocidadeY < 0) {
                     this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-up.png`;
-                } else{
+                } else {
                     this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-down.png`;
                 }
             }
         }
 
-        // Verifica se tocou no chão novamente
         if (this.y + this.velocidadeY >= this.chao) {
             this.y = this.chao;
             this.velocidadeY = 0;
-            // Libera para poder pular de novo
             this.estaNoChao = true;
         }
 
-        // Libera a trava do pulo assim que o jogador solta a tecla
         if (!teclaCima) {
             this.teclaPuloLiberada = true;
         }
     }
 
-    derrota(){
+    derrota() {
         this.derrotaImg++;
-        if(this.contImg < 10){
+        if (this.derrotaImg < 10) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat1.png`;
-        } else if (this.contImg < 20){
+        } else if (this.derrotaImg < 20) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat2.png`;
         } else {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat3.png`;
         }
     }
 
-    vitoria(){
+    vitoria() {
         this.contImg++;
 
-        if(this.contImg % 40 == 0){
+        if (this.contImg % 40 == 0) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory1.png`;
-        } else if (this.contImg % 40 == 10){
+        } else if (this.contImg % 40 == 10) {
             this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory2.png`;
         }
     }
 
-    // impede o personagem sair da area visivel
     limitarTela(limiteCanvas) {
-        // Impede de sair pela esquerda (X min = 0)
         if (this.x < 0) {
             this.x = 0;
         }
-        // Impede de sair pela direita (X max = largura do Canvas - largura do personagem)
         if (this.x > limiteCanvas - this.largura) {
             this.x = limiteCanvas - this.largura;
         }
     }
-
 }
