@@ -66,9 +66,11 @@ class Main {
     update() {
         // Se a partida acabou, atualiza apenas as animações de fim de jogo
         if (this.player1.vida <= 0 || this.player2.vida <= 0) {
-            // Para o temporizador imediatamente quando alguém morrer
-            if (this.intervaloTempo) {
-                clearInterval(this.intervaloTempo);
+            // Se ainda não estava registrado o fim de jogo
+            if (this.podeLutar) {
+                this.podeLutar = false;
+                this.pararTemporizador();
+                this.exibirKO();
             }
 
             this.player1.atualizarVitoriaDerrota();
@@ -199,9 +201,28 @@ class Main {
         }, 1000);
     }
 
+    pararTemporizador() {
+        if (this.intervaloTempo) {
+            clearInterval(this.intervaloTempo);
+            this.intervaloTempo = null;
+        }
+    }
+
     atualizarHUDTempo() {
         const tempo = document.getElementById("tempo-jogo");
         if (tempo) tempo.textContent = this.tempoRestante;
+    }
+
+    exibirKO() {
+        const overlay = document.getElementById("overlay-status");
+        const texto = document.getElementById("texto-status");
+
+        if (overlay && texto) {
+            texto.textContent = "K.O.";
+            overlay.classList.remove("escondido");
+            
+            texto.classList.add("texto-ko");
+        }
     }
 }
 
