@@ -181,3 +181,27 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+/* Utilitário para ocultar */
+.escondido {
+  display: none !important;
+}
+
+/* Mensagem de ROUND / FIGHT centralizada */
+.overlay-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.overlay-status h1 {
+  font-size: 64px;
+  color: #ffcc00;
+  text-shadow: 4px 4px 0px #000, -4px -4px 0px #000;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0;
+}

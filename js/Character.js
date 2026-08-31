@@ -131,7 +131,8 @@ class Character {
         }
     }
 
-    update(teclas, oponente) {
+    update(teclas, oponente, podeLutar) {
+
         // Se estiver em tomando dano impede novas ações
         if (this.tomandoDano) {
             this.velocidadeX = 0; // Não move enquanto apanha
@@ -155,13 +156,23 @@ class Character {
             this.olhandoParaEsquerda = this.x > oponente.x;
         }
 
-        // Captura as teclas do jogador correto
-        const teclaDireita = this.ePlayer1 ? teclas.p1_direita : teclas.p2_direita;
-        const teclaEsquerda = this.ePlayer1 ? teclas.p1_esquerda : teclas.p2_esquerda;
-        const teclaCima     = this.ePlayer1 ? teclas.p1_cima     : teclas.p2_cima;
-        const teclaBaixo    = this.ePlayer1 ? teclas.p1_baixo    : teclas.p2_baixo;
-        const teclaJab      = this.ePlayer1 ? teclas.p1_jab      : teclas.p2_jab;
-        const teclaChute    = this.ePlayer1 ? teclas.p1_chute    : teclas.p2_chute;
+        // Define as variáveis de controle
+        let teclaDireita = false;
+        let teclaEsquerda = false;
+        let teclaCima = false;
+        let teclaBaixo = false;
+        let teclaJab = false;
+        let teclaChute = false;
+
+        // Só lê os comandos do teclado se puder lutar
+        if (podeLutar) {
+            teclaDireita = this.ePlayer1 ? teclas.p1_direita : teclas.p2_direita;
+            teclaEsquerda = this.ePlayer1 ? teclas.p1_esquerda : teclas.p2_esquerda;
+            teclaCima     = this.ePlayer1 ? teclas.p1_cima     : teclas.p2_cima;
+            teclaBaixo    = this.ePlayer1 ? teclas.p1_baixo    : teclas.p2_baixo;
+            teclaJab      = this.ePlayer1 ? teclas.p1_jab      : teclas.p2_jab;
+            teclaChute    = this.ePlayer1 ? teclas.p1_chute    : teclas.p2_chute;
+        }
 
         // Libera as teclas de ataque depois do jogador soltá-las
         if (!teclaJab) {

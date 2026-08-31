@@ -11,6 +11,11 @@ class Main {
         this.player2 = null;
 
         this.configuracoes = null;
+
+        this.tempoRestante = 99;
+        this.intervaloTempo = null;
+        this.roundAtual = 1;
+        this.podeLutar = false; // Flag que trava/libera a movimentação
     }
 
     iniciar(){
@@ -41,6 +46,7 @@ class Main {
         // Só inicia o loop quando a imagem carregar
         this.imagemCenario.onload = () => {
             this.jogoRodando = true;
+            this.iniciarRound();
             this.loop(configuracoes); // Dispara o Game Loop
         };
 
@@ -60,17 +66,23 @@ class Main {
     update() {
         // Se a partida acabou, atualiza apenas as animações de fim de jogo
         if (this.player1.vida <= 0 || this.player2.vida <= 0) {
+            // Para o temporizador imediatamente quando alguém morrer
+            if (this.intervaloTempo) {
+                clearInterval(this.intervaloTempo);
+            }
+
             this.player1.atualizarVitoriaDerrota();
             this.player2.atualizarVitoriaDerrota();
         } else {
-        // Lógica normal de movimentação e combate enquanto o jogo roda
-            if (this.player1) this.player1.update(this.input.teclas, this.player2);
+            // Se for o modo "pvc", envia um objeto com todas as entradas falsas
+            const entradasP2 = (this.configuracoes.modo === "pvc") ? {} : this.input.teclas;
 
+            // Atualiza cada personagem
+            if (this.player1) {
+                this.player1.update(this.input.teclas, this.player2, this.podeLutar);
+            }
             if (this.player2) {
-                // Se for o modo "pvc", envia um objeto com todas as entradas falsas
-                const entradasP2 = (this.configuracoes.modo === "pvc") ? {} : this.input.teclas;
-                
-                this.player2.update(entradasP2, this.player1);
+                this.player2.update(entradasP2, this.player1, this.podeLutar);
             }
 
             // Checa colisões depois de atualizar os dois personagens
@@ -138,6 +150,58 @@ class Main {
             const porc2 = (this.player2.vida / this.player2.vidaMaxima) * 100;
             barraP2.style.width = `${porc2}%`;
         }
+    }
+
+    // Método para iniciar a animação do Round e depois o contador
+    iniciarRound() {
+        this.podeLutar = false; // Trava os personagens durante a introdução
+        this.tempoRestante = 99;
+        this.atualizarHUDTempo();
+
+        const overlay = document.getElementById("overlay-status");
+        const texto = document.getElementById("texto-status");
+
+        // Exibe "ROUND 1"
+        texto.textContent = `ROUND ${this.roundAtual}`;
+        overlay.classList.remove("escondido");
+
+        // Após 1.5s muda para "FIGHT!"
+        setTimeout(() => {
+            texto.textContent = "FIGHT!";
+
+            // Após mais 1s esconde o texto e libera o jogo + contador
+            setTimeout(() => {
+                overlay.classList.add("escondido");
+                this.podeLutar = true; // Libera os personagens
+                this.iniciarTemporizador();
+            }, 1000);
+
+        }, 1500);
+    }
+
+    // Controle do Temporizador
+    iniciarTemporizador() {
+        if (this.intervaloTempo) clearInterval(this.intervaloTempo);
+
+        this.intervaloTempo = setInterval(() => {
+            if (this.podeLutar) {
+                this.tempoRestante--;
+                this.atualizarHUDTempo();
+
+                // Quando chega a 0 trava tudo e para o tempo
+                if (this.tempoRestante <= 0) {
+                    this.tempoRestante = 0;
+                    this.atualizarHUDTempo();
+                    this.podeLutar = false;
+                    clearInterval(this.intervaloTempo);
+                }
+            }
+        }, 1000);
+    }
+
+    atualizarHUDTempo() {
+        const tempo = document.getElementById("tempo-jogo");
+        if (tempo) tempo.textContent = this.tempoRestante;
     }
 }
 

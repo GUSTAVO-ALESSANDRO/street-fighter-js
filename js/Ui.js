@@ -81,6 +81,7 @@ class UI{
             this.configuracaoJogo.cenario = this.escolhaCenario.value.toLowerCase();
 
             this.esconderMenu()
+            this.main.iniciarRound();
             this.main.jogar(this.configuracaoJogo);
         });
     }
