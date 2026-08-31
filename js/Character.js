@@ -496,6 +496,13 @@ class Character {
     }
 
     atualizarVitoriaDerrota() {
+        // Se o personagem morreu ou venceu no ar, aplica a gravidade até encostar no chão
+        if (!this.estaNoChao) {
+            this.aplicarGravidade(false);
+            this.y += this.velocidadeY;
+            return; // Espera chegar ao chão antes de iniciar os quadros da animação
+        }
+
         if (this.vida <= 0) {
             this.frameFimJogo++;
 
