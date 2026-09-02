@@ -12,7 +12,7 @@ class Main {
 
         this.configuracoes = null;
 
-        this.tempoRestante = 99;
+        this.tempoRestante = 9;
         this.intervaloTempo = null;
 
         this.podeLutar = false;
@@ -24,6 +24,7 @@ class Main {
         // Placar de vitórias por round
         this.vitoriasP1 = 0;
         this.vitoriasP2 = 0;
+        this.historicoRounds = [];
     }
 
     iniciar(){
@@ -39,6 +40,7 @@ class Main {
         this.vitoriasP1 = 0;
         this.vitoriasP2 = 0;
         this.trocandoRound = false; 
+        this.historicoRounds = [];
         this.configuracoes = configuracoes;
         
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
@@ -69,11 +71,12 @@ class Main {
         const alguemMorreu = this.player1.vida <= 0 || this.player2.vida <= 0;
 
         if (alguemMorreu || tempoEsgotado) {
-            if (this.podeLutar && !this.trocandoRound) {
+            if (!this.trocandoRound) {
+                this.trocandoRound = true;
                 this.podeLutar = false;
                 this.pararTemporizador();
                 
-                let vencedorRound = null; // null = empate no round
+                let vencedorRound = "empate";
 
                 if (this.player1.vida > this.player2.vida) {
                     vencedorRound = "P1";
@@ -81,9 +84,10 @@ class Main {
                 } else if (this.player2.vida > this.player1.vida) {
                     vencedorRound = "P2";
                     this.vitoriasP2++;
-                } else {
-                    // Empate de vida ou tempo zerado com vida igual
                 }
+
+                // Registra o resultado no histórico
+                this.historicoRounds.push(vencedorRound);
 
                 if (tempoEsgotado && !alguemMorreu) {
                     this.exibirKOTimeOver("TIME OVER");
@@ -91,7 +95,7 @@ class Main {
                     this.exibirKOTimeOver("K.O");
                 }
 
-                this.agendarProximoRound(vencedorRound);
+                this.agendarProximoRound();
             }
 
             this.player1.atualizarVitoriaDerrota();
@@ -174,7 +178,7 @@ class Main {
 
     iniciarRound() {
         this.podeLutar = false; 
-        this.tempoRestante = 99;
+        this.tempoRestante = 9;
         this.atualizarHUDTempo();
 
         const overlay = document.getElementById("overlay-status");
@@ -241,21 +245,38 @@ class Main {
         }
     }
 
-    agendarProximoRound(vencedorRound) {
-        this.trocandoRound = true;
-
+    agendarProximoRound() {
         setTimeout(() => {
-            // Regras do melhor de 3 ou fim dos 3 rounds
-            const P1Ganhou = this.vitoriasP1 >= 2 || (this.roundAtual === 3 && this.vitoriasP1 > this.vitoriasP2);
-            const P2Ganhou = this.vitoriasP2 >= 2 || (this.roundAtual === 3 && this.vitoriasP2 > this.vitoriasP1);
-            const EmpatePartida = (this.roundAtual === 3 && this.vitoriasP1 === this.vitoriasP2);
+            const r = this.historicoRounds;
+            const total = r.length;
 
-            if (P1Ganhou) {
-                this.finalizarPartida("P1 WIN!");
-            } else if (P2Ganhou) {
-                this.finalizarPartida("P2 WIN!");
-            } else if (EmpatePartida) {
-                this.finalizarPartida("DRAW GAME!");
+            let vencedorPartida = null; // null = continua o jogo
+
+            // quem faz 2 vitórias ganha a partida
+            if (this.vitoriasP1 >= 2){
+                vencedorPartida = "P1 WIN!";
+            } else if (this.vitoriasP2 >= 2) {
+                vencedorPartida = "P2 WIN!";
+            } else if (total === 2) { // verifica 1 vitória e 1 empate
+                if (this.vitoriasP1 === 1 && this.vitoriasP2 === 0) {
+                    vencedorPartida = "P1 WIN!";
+                }
+                else if (this.vitoriasP2 === 1 && this.vitoriasP1 === 0){
+                    vencedorPartida = "P2 WIN!";
+                }
+            } else if (total === 3) {
+                if (this.vitoriasP1 === 0 && this.vitoriasP2 === 0) {
+                    // 3 empates seguidos, os dois perdem
+                    vencedorPartida = "GAME OVER";
+                } else {
+                    // Se houve vitoria alternada e empate no final e ganha quem venceu o R1
+                    const primeiroVencedor = r.find(res => res === "P1" || res === "P2");
+                    vencedorPartida = primeiroVencedor ? `${primeiroVencedor} WIN!` : "GAME OVER";
+                }
+            }
+
+            if (vencedorPartida) {
+                this.finalizarPartida(vencedorPartida);
             } else {
                 this.roundAtual++;
                 this.resetarRound();
