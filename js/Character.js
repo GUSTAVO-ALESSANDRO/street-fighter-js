@@ -95,8 +95,9 @@ class Character {
             // Alinha a base da imagem exatamente na linha do chão (evita flutuar)
             const desenharY = (this.y + this.altura) - alturaRender;
 
-            const precisaEspelhar = (this.olhandoParaEsquerda && this.orientacaoNativa === "direita") ||
-                                    (!this.olhandoParaEsquerda && this.orientacaoNativa === "esquerda");
+            const olhaParaDireita = !this.olhandoParaEsquerda;
+            const precisaEspelhar = (olhaParaDireita && this.orientacaoNativa === "esquerda") ||
+                                    (!olhaParaDireita && this.orientacaoNativa === "direita");
 
             // Ajuste X para alinhar o corpo e evitar que o imagem vá para trás no ataque devido ao aumento do PNG
             let desenharX = this.x;
@@ -523,5 +524,20 @@ class Character {
                 this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory2.png`;
             }
         }
+    }
+
+    resetarPersonagem(x, y, estaNaEsquerda) {
+        this.x = x;
+        this.y = y;
+        this.vida = this.vidaMaxima;
+        this.velocidadeX = 0;
+        this.velocidadeY = 0;
+        this.estaNoChao = true;
+        this.frameFimJogo = 0;
+
+        this.olhandoParaEsquerda = !estaNaEsquerda;
+
+        // Restaura o sprite padrão parado
+        this.imagem.src = `assets/personagem/${this.nome}/${this.nome}1.png`;
     }
 }

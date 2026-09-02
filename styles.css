@@ -206,7 +206,7 @@ body {
   margin: 0;
 }
 
-#texto-status.texto-ko {
+#texto-status.texto-status {
     color: #ff0000;
     text-shadow: 6px 6px 0px #000, -3px -3px 0px #fff;
     font-size: 8rem;
