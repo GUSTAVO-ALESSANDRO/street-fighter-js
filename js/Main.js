@@ -12,7 +12,7 @@ class Main {
 
         this.configuracoes = null;
 
-        this.tempoRestante = 9;
+        this.tempoRestante = 99;
         this.intervaloTempo = null;
 
         this.podeLutar = false;
@@ -154,31 +154,49 @@ class Main {
         );
     }
 
-    atualizarHUD() {
-        const barraP1 = document.getElementById("vida-p1");
-        const barraP2 = document.getElementById("vida-p2");
-        const nomeP1 = document.getElementById("nome-p1");
-        const nomeP2 = document.getElementById("nome-p2");
+atualizarHUD() {
+        const barraEsquerda = document.getElementById("vida-p1");
+        const barraDireita = document.getElementById("vida-p2");
+        const nomeEsquerda = document.getElementById("nome-p1");
+        const nomeDireita = document.getElementById("nome-p2");
 
-        if (this.configuracoes) {
-            if (nomeP1) nomeP1.textContent = `P1: ${this.configuracoes.p1.toUpperCase()} (${this.vitoriasP1})`;
-            if (nomeP2) nomeP2.textContent = `${this.configuracoes.p2.toUpperCase()} :P2 (${this.vitoriasP2})`;
+        // Verifica se no round atual o P1 está na esquerda ou na direita
+        const p1NaEsquerda = (this.roundAtual % 2 !== 0);
+
+        // Quem está do lado esquerdo e do lado direito no momento
+        const personagemEsquerda = p1NaEsquerda ? this.player1 : this.player2;
+        const personagemDireita = p1NaEsquerda ? this.player2 : this.player1;
+
+        const nomeP1Str = this.configuracoes ? this.configuracoes.p1.toUpperCase() : "P1";
+        const nomeP2Str = this.configuracoes ? this.configuracoes.p2.toUpperCase() : "P2";
+
+        // Atualiza textos do HUD mantendo a posição visual correta da tela
+        if (nomeEsquerda) {
+            nomeEsquerda.textContent = p1NaEsquerda 
+                ? `P1: ${nomeP1Str} (${this.vitoriasP1})` 
+                : `P2: ${nomeP2Str} (${this.vitoriasP2})`;
+        }
+        if (nomeDireita) {
+            nomeDireita.textContent = p1NaEsquerda 
+                ? `${nomeP2Str} :P2 (${this.vitoriasP2})` 
+                : `${nomeP1Str} :P1 (${this.vitoriasP1})`;
         }
 
-        if (barraP1 && this.player1) {
-            const porc1 = Math.max(0, (this.player1.vida / this.player1.vidaMaxima) * 100);
-            barraP1.style.width = `${porc1}%`;
+        // Atualiza as barras com base no personagem físico que está naquele lado
+        if (barraEsquerda && personagemEsquerda) {
+            const porc1 = Math.max(0, (personagemEsquerda.vida / personagemEsquerda.vidaMaxima) * 100);
+            barraEsquerda.style.width = `${porc1}%`;
         }
 
-        if (barraP2 && this.player2) {
-            const porc2 = Math.max(0, (this.player2.vida / this.player2.vidaMaxima) * 100);
-            barraP2.style.width = `${porc2}%`;
+        if (barraDireita && personagemDireita) {
+            const porc2 = Math.max(0, (personagemDireita.vida / personagemDireita.vidaMaxima) * 100);
+            barraDireita.style.width = `${porc2}%`;
         }
     }
 
     iniciarRound() {
         this.podeLutar = false; 
-        this.tempoRestante = 9;
+        this.tempoRestante = 99;
         this.atualizarHUDTempo();
 
         const overlay = document.getElementById("overlay-status");
