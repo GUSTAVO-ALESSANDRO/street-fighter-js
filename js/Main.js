@@ -25,14 +25,25 @@ class Main {
         this.vitoriasP1 = 0;
         this.vitoriasP2 = 0;
         this.historicoRounds = [];
+
+        this.ui = null;
     }
 
     iniciar(){
-        const ui = new UI(this);
-        ui.popularPersonagens("seletor-p1");
-        ui.popularPersonagens("seletor-p2");
-        ui.popularCenarios();
-        ui.escutarEventos();
+        this.ui = new UI(this);
+        this.ui.popularPersonagens("seletor-p1");
+        this.ui.popularPersonagens("seletor-p2");
+        this.ui.popularCenarios();
+        this.ui.escutarEventos();
+    }
+
+    acharOrientacaoPersonagem(nome) {
+        if (!nome) return "esquerda";
+        const nomeLower = nome.toLowerCase();
+        const ehDireita = ORIENTACAO_PERSONAGEM.direita.some(
+            p => p.toLowerCase() === nomeLower
+        );
+        return ehDireita ? "direita" : "esquerda";
     }
 
     jogar(configuracoes) {
@@ -42,11 +53,18 @@ class Main {
         this.trocandoRound = false; 
         this.historicoRounds = [];
         this.configuracoes = configuracoes;
-        
+
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
 
         this.player1 = new Character(100, 270, true, configuracoes.p1);  
         this.player2 = new Character(780, 270, false, configuracoes.p2); 
+
+        // Define quem olha para onde com base no lado e na orientação nativa do sprite
+        const orientP1 = this.acharOrientacaoPersonagem(configuracoes.p1);
+        const orientP2 = this.acharOrientacaoPersonagem(configuracoes.p2);
+
+        this.player1.olhandoParaEsquerda = (orientP1 === "esquerda");
+        this.player2.olhandoParaEsquerda = (orientP2 === "direita");
 
         this.atualizarHUD();
 
@@ -154,7 +172,7 @@ class Main {
         );
     }
 
-atualizarHUD() {
+    atualizarHUD() {
         const barraEsquerda = document.getElementById("vida-p1");
         const barraDireita = document.getElementById("vida-p2");
         const nomeEsquerda = document.getElementById("nome-p1");
@@ -311,6 +329,30 @@ atualizarHUD() {
             texto.textContent = mensagem;
             overlay.classList.remove("escondido");
         }
+
+        // Registra a vitória na UI
+        if (this.ui) {
+            if (mensagem.includes("P1 WIN")) {
+                this.ui.registrarVitoriaPartida("P1");
+            } else if (mensagem.includes("P2 WIN")) {
+                this.ui.registrarVitoriaPartida("P2");
+            }
+        }
+
+        // Interrompe o temporizador e a execução do loop do Canvas
+        this.pararTemporizador();
+        this.jogoRodando = false;
+
+        // Aguarda 3 segundos exibindo a mensagem antes de retornar ao menu principal
+        setTimeout(() => {
+            if (overlay) overlay.classList.add("escondido");
+
+            // Limpa o canvas
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+            // Exibe o menu de volta
+            this.ui.mostrarMenu();
+        }, 3000);
     }
 
     resetarRound() {
@@ -326,10 +368,16 @@ atualizarHUD() {
         const xP1 = p1LadoEsquerdo ? 100 : 780;
         const xP2 = p1LadoEsquerdo ? 780 : 100;
 
-        // P1 continua respondendo às teclas do P1, apenas reseta posição e lado onde nasceu
         if (this.player1 && this.player2) {
             this.player1.resetarPersonagem(xP1, 270, p1LadoEsquerdo);
             this.player2.resetarPersonagem(xP2, 270, !p1LadoEsquerdo);
+
+            const orientP1 = this.acharOrientacaoPersonagem(this.player1.nome);
+            const orientP2 = this.acharOrientacaoPersonagem(this.player2.nome);
+
+            // Se P1 está no lado esquerdo, deve olhar para a direita e vice-versa
+            this.player1.olhandoParaEsquerda = p1LadoEsquerdo ? (orientP1 === "esquerda") : (orientP1 === "direita");
+            this.player2.olhandoParaEsquerda = !p1LadoEsquerdo ? (orientP2 === "esquerda") : (orientP2 === "direita");
         }
 
         this.atualizarHUD();

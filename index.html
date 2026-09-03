@@ -8,7 +8,23 @@
 </head>
 <body>
 
-  <div id="tela-menu" class="modal-menu">
+<div id="tela-menu" class="modal-menu">
+    <!-- Fundo de preview do cenário -->
+    <div id="fundo-preview-cenario" class="preview-cenario"></div>
+    <div class="overlay-escuro"></div>
+
+    <!-- Painel do Jogador 1 (Esquerda) -->
+    <div class="preview-lado lado-p1">
+      <div class="placar-vitorias">
+        <span class="rotulo-vitoria">VITÓRIAS</span>
+        <span id="vitorias-p1" class="numero-vitoria">0</span>
+      </div>
+      <div class="container-sprite-preview">
+        <img id="preview-p1-img" src="" alt="Preview P1">
+      </div>
+    </div>
+
+    <!-- Caixa Central de Opções -->
     <div class="caixa-menu">
       <h1>Street Fighter Lite</h1>
       
@@ -25,13 +41,13 @@
         <div>
           <label for="seletor-p1">Jogador 1:</label>
           <select id="seletor-p1">
-            <!-- Personagens colocados dinamicamente pelo js -->
+            <!-- Personagem colocado dinamicamente pelo JS -->
           </select>
         </div>
-        <div>
-          <label for="seletor-p2">Jogador 2:</label>
+        <div id="container-seletor-p2">
+          <label id="rotulo-p2" for="seletor-p2">Jogador 2:</label>
           <select id="seletor-p2">
-            <!-- Personagens colocados dinamicamente pelo js -->
+            <!-- Personagem colocado dinamicamente pelo JS -->
           </select>
         </div>
       </div>
@@ -40,11 +56,22 @@
       <div class="grupo-campo">
         <label for="seletor-cenario">Cenário:</label>
         <select id="seletor-cenario">
-            <!-- Cenários colocados dinamicamente pelo js -->
+            <!-- Cenários colocados dinamicamente pelo JS -->
         </select>
       </div>
 
       <button id="botao-iniciar" class="botao">INICIAR LUTA</button>
+    </div>
+
+    <!-- Painel do Jogador 2 / PC (Direita) -->
+    <div class="preview-lado lado-p2">
+      <div class="placar-vitorias">
+        <span id="rotulo-placar-p2" class="rotulo-vitoria">VITÓRIAS (P2)</span>
+        <span id="vitorias-p2" class="numero-vitoria">0</span>
+      </div>
+      <div class="container-sprite-preview">
+        <img id="preview-p2-img" src="" alt="Preview P2">
+      </div>
     </div>
   </div>
 

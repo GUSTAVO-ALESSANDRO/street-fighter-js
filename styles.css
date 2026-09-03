@@ -30,28 +30,131 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.85);
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  z-index: 10;
+  padding: 0 40px;
+  z-index: 20;
+  overflow: hidden;
 }
 
+/* Fundo Dinâmico do Cenário */
+.preview-cenario {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: -2;
+  filter: blur(2px);
+  transition: background-image 0.3s ease-in-out;
+}
+
+#tela-menu {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 1100px;
+    height: 85vh;
+    max-height: 700px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+}
+
+.overlay-escuro {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  z-index: -1;
+}
+
+/* Estilo Central */
 .caixa-menu {
+  position: relative;
+  z-index: 2;
   background-color: var(--bg-painel);
   border: 3px solid var(--amarelo-destaque);
   padding: 30px;
   border-radius: 8px;
-  width: 400px;
+  width: 380px;
   color: #fff;
   text-align: center;
-  box-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.8);
 }
 
 .caixa-menu h1 {
   font-size: 24px;
   color: var(--amarelo-destaque);
   margin-bottom: 20px;
+}
+
+/* Painéis Laterais dos Personagens */
+.preview-lado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;
+  z-index: 2;
+}
+
+/* Placar de Vitórias sobre os Personagens */
+.placar-vitorias {
+  background-color: rgba(0, 0, 0, 0.85);
+  border: 2px solid var(--amarelo-destaque);
+  border-radius: 6px;
+  padding: 8px 15px;
+  text-align: center;
+  margin-bottom: 20px;
+  min-width: 140px;
+}
+
+.rotulo-vitoria {
+  display: block;
+  font-size: 11px;
+  color: #aaa;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.numero-vitoria {
+  display: block;
+  font-size: 26px;
+  color: var(--amarelo-destaque);
+  font-weight: bold;
+}
+
+/* Container para imagem do Personagem */
+.container-sprite-preview {
+  width: 200px;
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.container-sprite-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.lado-p2 .container-sprite-preview img {
+  transform: scaleX(-1);
 }
 
 .grupo-campo {
