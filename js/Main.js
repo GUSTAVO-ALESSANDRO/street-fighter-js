@@ -9,6 +9,7 @@ class Main {
 
         this.player1 = null;
         this.player2 = null;
+        this.bot = null;
 
         this.configuracoes = null;
 
@@ -59,6 +60,12 @@ class Main {
         this.player1 = new Character(100, 270, true, configuracoes.p1);  
         this.player2 = new Character(780, 270, false, configuracoes.p2); 
 
+        if (this.configuracoes.modo === "pvc") {
+            this.bot = new Bot(this.player1, this.player2);
+        } else {
+            this.bot = null;
+        }
+
         // Define quem olha para onde com base no lado e na orientação nativa do sprite
         const orientP1 = this.acharOrientacaoPersonagem(configuracoes.p1);
         const orientP2 = this.acharOrientacaoPersonagem(configuracoes.p2);
@@ -104,7 +111,6 @@ class Main {
                     this.vitoriasP2++;
                 }
 
-                // Registra o resultado no histórico
                 this.historicoRounds.push(vencedorRound);
 
                 if (tempoEsgotado && !alguemMorreu) {
@@ -119,7 +125,12 @@ class Main {
             this.player1.atualizarVitoriaDerrota();
             this.player2.atualizarVitoriaDerrota();
         } else {
-            const entradasP2 = (this.configuracoes.modo === "pvc") ? {} : this.input.teclas;
+            // Define de onde vêm as entradas do Player 2 (Bot ou Teclado Humano)
+            let entradasP2 = this.input.teclas;
+            
+            if (this.configuracoes.modo === "pvc" && this.bot && this.podeLutar) {
+                entradasP2 = this.bot.decidir();
+            }
 
             if (this.player1) {
                 this.player1.update(this.input.teclas, this.player2, this.podeLutar);
