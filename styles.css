@@ -1,6 +1,6 @@
 :root {
   --bg-escuro: #121212;
-  --bg-painel: rgba(20, 20, 20, 0.9);
+  --bg-painel: rgba(20, 20, 20, 0.95);
   --verde-vida: #2ecc71;
   --bg-vida: #e74c3c;
   --amarelo-destaque: #f1c40f;
@@ -23,7 +23,123 @@ body {
   overflow: hidden;
 }
 
-/* --- TELA 1: MENU DE SELEÇÃO --- */
+.modal-sobreposto {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 200;
+}
+
+/* Tela Inicial */
+.conteudo-inicial {
+  text-align: center;
+  animation: pulsar 2s infinite;
+}
+
+.titulo-jogo {
+  font-size: 3.5rem;
+  color: #fff;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.titulo-jogo .destaque {
+  color: var(--amarelo-destaque);
+}
+
+.subtitulo {
+  color: #888;
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+}
+
+/* Tela de Instruções */
+.caixa-instrucoes {
+  background-color: var(--bg-painel);
+  border: 3px solid var(--amarelo-destaque);
+  border-radius: 8px;
+  width: 90vw;
+  max-width: 650px;
+  max-height: 85vh;
+  padding: 25px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.caixa-instrucoes h2 {
+  color: var(--amarelo-destaque);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.divisor {
+  border: 0;
+  height: 1px;
+  background: #444;
+  margin-bottom: 15px;
+}
+
+.conteudo-scroll {
+  overflow-y: auto;
+  padding-right: 10px;
+  margin-bottom: 15px;
+}
+
+.conteudo-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.conteudo-scroll::-webkit-scrollbar-thumb {
+  background: var(--amarelo-destaque);
+  border-radius: 3px;
+}
+
+.secao-instrucao {
+  margin-bottom: 20px;
+}
+
+.secao-instrucao h3 {
+  color: var(--amarelo-destaque);
+  font-size: 1rem;
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #444;
+  padding-bottom: 4px;
+}
+
+.secao-instrucao p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  color: #ccc;
+  margin-bottom: 6px;
+}
+
+.tabela-controles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.tecla {
+  display: inline-block;
+  background-color: #333;
+  color: var(--amarelo-destaque);
+  border: 1px solid #555;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-family: monospace;
+}
+
 .modal-menu {
   position: absolute;
   top: 0;
@@ -38,7 +154,6 @@ body {
   overflow: hidden;
 }
 
-/* Fundo Dinâmico do Cenário */
 .preview-cenario {
   position: absolute;
   top: 0;
@@ -53,22 +168,22 @@ body {
 }
 
 #tela-menu {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 90vw;
-    max-width: 1100px;
-    height: 85vh;
-    max-height: 700px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
-    border-radius: 8px;
-    z-index: 100;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 40px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 1100px;
+  height: 85vh;
+  max-height: 700px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
 }
 
 .overlay-escuro {
@@ -81,13 +196,12 @@ body {
   z-index: -1;
 }
 
-/* Estilo Central */
 .caixa-menu {
   position: relative;
   z-index: 2;
   background-color: var(--bg-painel);
   border: 3px solid var(--amarelo-destaque);
-  padding: 30px;
+  padding: 25px;
   border-radius: 8px;
   width: 380px;
   color: #fff;
@@ -101,7 +215,6 @@ body {
   margin-bottom: 20px;
 }
 
-/* Painéis Laterais dos Personagens */
 .preview-lado {
   display: flex;
   flex-direction: column;
@@ -110,7 +223,6 @@ body {
   z-index: 2;
 }
 
-/* Placar de Vitórias sobre os Personagens */
 .placar-vitorias {
   background-color: rgba(0, 0, 0, 0.85);
   border: 2px solid var(--amarelo-destaque);
@@ -136,7 +248,6 @@ body {
   font-weight: bold;
 }
 
-/* Container para imagem do Personagem */
 .container-sprite-preview {
   width: 200px;
   height: 260px;
@@ -158,7 +269,7 @@ body {
 }
 
 .grupo-campo {
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   text-align: left;
 }
 
@@ -187,6 +298,7 @@ body {
   flex: 1;
 }
 
+/* BOTÕES */
 .botao {
   width: 100%;
   padding: 12px;
@@ -196,13 +308,32 @@ body {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
-  font-size: 16px;
-  transition: background 0.2s;
+  margin-top: 8px;
+  font-size: 15px;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .botao:hover {
   background-color: #d4ac0d;
+}
+
+.botao:active {
+  transform: scale(0.98);
+}
+
+.botao-secundario {
+  background-color: #444;
+  color: #fff;
+}
+
+.botao-secundario:hover {
+  background-color: #555;
+}
+
+.botao-grande {
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  width: auto;
 }
 
 /* ÁREA DO CANVAS E HUD */
@@ -214,7 +345,6 @@ body {
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Canvas com renderização de pixels */
 #canvasJogo {
   width: 100%;
   height: 100%;
@@ -224,7 +354,6 @@ body {
   image-rendering: crisp-edges;
 }
 
-/* Interface Híbrida (HUD) sobreposta no Canvas */
 #painel-hud {
   position: absolute;
   top: 15px;
@@ -234,7 +363,7 @@ body {
   justify-content: space-between;
   align-items: center;
   z-index: 5;
-  pointer-events: none; /* Deixa cliques passarem para o jogo */
+  pointer-events: none;
 }
 
 .hud-jogador {
@@ -339,4 +468,78 @@ body {
     transform: scale(1);
     opacity: 1;
   }
+}
+
+.container-teclado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  background-color: rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.teclado-visual {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background-color: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.linha-teclas {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.tecla {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  background-color: #333;
+  color: var(--amarelo-destaque);
+  border: 1px solid #555;
+  border-bottom: 3px solid #222;
+  border-radius: 4px;
+  font-weight: bold;
+  font-family: monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.tecla.tecla-acao {
+  color: #2ecc71;
+  border-color: #27ae60;
+}
+
+.tecla.invisivel {
+  visibility: hidden;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.tabela-controles {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 15px;
+  font-size: 0.85rem;
+  color: #ddd;
+}
+
+.tabela-controles .tecla {
+  width: 24px;
+  height: 24px;
+  font-size: 0.75rem;
+  margin-right: 6px;
+  vertical-align: middle;
 }

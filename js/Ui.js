@@ -42,6 +42,15 @@ class UI{
 
         this.animacaoP1Timer = null;
         this.animacaoP2Timer = null;
+
+        // Referências das novas telas
+        this.telaInicial = document.getElementById("tela-inicial");
+        this.telaInstrucoes = document.getElementById("tela-instrucoes");
+
+        // Referências dos novos botões
+        this.botaoStartInicial = document.getElementById("botao-iniciar-menu");
+        this.botaoInstrucoesMenu = document.getElementById("botao-instrucoes-menu");
+        this.botaoFecharInstrucoes = document.getElementById("botao-fechar-instrucoes");
     }
 
     // popula com todos os personagens existentes a escolha
@@ -96,6 +105,28 @@ class UI{
             this.esconderMenu();
             this.main.jogar(this.configuracaoJogo);
         });
+
+        // Botão start inicial, para o menu
+        if (this.botaoStartInicial) {
+            this.botaoStartInicial.addEventListener("click", () => {
+                this.telaInicial.classList.add("escondido");
+                this.menu.classList.remove("escondido");
+            });
+        }
+
+        // Botão de instruções do jogo
+        if (this.botaoInstrucoesMenu) {
+            this.botaoInstrucoesMenu.addEventListener("click", () => {
+                this.telaInstrucoes.classList.remove("escondido");
+            });
+        }
+
+        // Botão voltar ao menu
+        if (this.botaoFecharInstrucoes) {
+            this.botaoFecharInstrucoes.addEventListener("click", () => {
+                this.telaInstrucoes.classList.add("escondido");
+            });
+        }
 
         // Atualiza o preview inicial com os valores padrão dos selectors
         this.atualizarPreview();
@@ -170,6 +201,7 @@ class UI{
 
     mostrarMenu() {
         this.menu.style.display = "flex";
+        this.menu.classList.remove("escondido");
 
         // Se estiver no modo PvC, sorteia um novo personagem para a máquina
         if (this.escolhaModo.value === "pvc") {
@@ -182,6 +214,7 @@ class UI{
 
     esconderMenu(){
         this.menu.style.display = "none";
+        this.menu.classList.add("escondido");
         
         // Atualiza os nomes no HUD
         this.nomeP1.textContent = `P1: ${this.configuracaoJogo.p1.toUpperCase()}`;
