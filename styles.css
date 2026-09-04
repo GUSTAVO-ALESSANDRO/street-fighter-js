@@ -290,7 +290,7 @@ body {
   display: none !important;
 }
 
-/* Mensagem de ROUND / FIGHT centralizada */
+/* Container que centraliza o texto exatamente no meio da tela */
 .overlay-status {
   position: absolute;
   top: 50%;
@@ -298,8 +298,14 @@ body {
   transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
 }
 
+/* Estilo do texto base */
 .overlay-status h1 {
   font-size: 64px;
   color: #ffcc00;
@@ -307,31 +313,30 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   margin: 0;
+  white-space: nowrap;
 }
 
+/* Estilo de impacto para K.O., TIME OVER e Vitória da Partida */
 #texto-status.texto-status {
-    color: #ff0000;
-    text-shadow: 6px 6px 0px #000, -3px -3px 0px #fff;
-    font-size: 8rem;
-    font-weight: 900;
-    letter-spacing: 4px;
-    animation: impactoKO 0.3s ease-out forwards;
+  color: #ff0000;
+  text-shadow: 6px 6px 0px #000, -3px -3px 0px #fff;
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  animation: impactoKO 0.3s ease-out forwards;
 }
 
 @keyframes impactoKO {
-    0% {
-        /* Inicia gigante, transparente e centralizado */
-        transform: translateY(-80px) scale(2.5);
-        opacity: 0;
-    }
-    50% {
-        /* Suaviza o impacto no ponto final */
-        transform: translateY(-80px) scale(0.95);
-        opacity: 1;
-    }
-    100% {
-        /* Posição final, fixo 80px acima do centro */
-        transform: translateY(-80px) scale(1);
-        opacity: 1;
-    }
+  0% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }

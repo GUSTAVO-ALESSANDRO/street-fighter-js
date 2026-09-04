@@ -301,15 +301,15 @@ class Main {
 
             // quem faz 2 vitórias ganha a partida
             if (this.vitoriasP1 >= 2){
-                vencedorPartida = "P1 WIN!";
+                vencedorPartida = "Player 1 WIN!";
             } else if (this.vitoriasP2 >= 2) {
-                vencedorPartida = "P2 WIN!";
+                vencedorPartida = "Player 2 WIN!";
             } else if (total === 2) { // verifica 1 vitória e 1 empate
                 if (this.vitoriasP1 === 1 && this.vitoriasP2 === 0) {
-                    vencedorPartida = "P1 WIN!";
+                    vencedorPartida = "Player 1 WIN!";
                 }
                 else if (this.vitoriasP2 === 1 && this.vitoriasP1 === 0){
-                    vencedorPartida = "P2 WIN!";
+                    vencedorPartida = "Player 2 WIN!";
                 }
             } else if (total === 3) {
                 if (this.vitoriasP1 === 0 && this.vitoriasP2 === 0) {
@@ -343,9 +343,9 @@ class Main {
 
         // Registra a vitória na UI
         if (this.ui) {
-            if (mensagem.includes("P1 WIN")) {
+            if (mensagem.includes("Player 1 WIN")) {
                 this.ui.registrarVitoriaPartida("P1");
-            } else if (mensagem.includes("P2 WIN")) {
+            } else if (mensagem.includes("Player 2 WIN")) {
                 this.ui.registrarVitoriaPartida("P2");
             }
         }

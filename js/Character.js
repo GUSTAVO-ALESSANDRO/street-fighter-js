@@ -120,6 +120,9 @@ class Character {
             ctx.restore(); // Restaura o Canvas ao estado original
         }
 
+        /*
+        *
+        *
         // Desenha a Hurtbox por cima (para depuração)
         ctx.strokeStyle = "red";
         ctx.strokeRect(this.hurtbox.x, this.hurtbox.y, this.hurtbox.largura, this.hurtbox.altura);
@@ -130,6 +133,9 @@ class Character {
             ctx.lineWidth = 2;
             ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.largura, this.hitbox.altura);
         }
+        *
+        *
+        */
     }
 
     update(teclas, oponente, podeLutar) {
