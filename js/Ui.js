@@ -170,6 +170,12 @@ class UI{
 
     mostrarMenu() {
         this.menu.style.display = "flex";
+
+        // Se estiver no modo PvC, sorteia um novo personagem para a máquina
+        if (this.escolhaModo.value === "pvc") {
+            this.sortearPC();
+        }
+
         // Atualiza os números do placar e as imagens assim que retorna ao menu
         this.atualizarPreview();
     }
