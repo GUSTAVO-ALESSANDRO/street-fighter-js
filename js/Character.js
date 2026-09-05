@@ -47,7 +47,7 @@ class Character {
         this.frameFimJogo = 0;
 
         // Carrega a imagem inicial do personagem
-        this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+        this.definirSprite("-basic");
 
         // Orientação do personagem
         this.olhandoParaEsquerda = !ePlayer1;
@@ -274,11 +274,11 @@ class Character {
         if (!this.estaNoChao || this.atacando) return;
 
         if (this.contImg % 40 == 0) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}1.png`;
+            this.definirSprite("1");
         } else if (this.contImg % 40 == 12) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}2.png`;
+            this.definirSprite("2");
         } else if (this.contImg % 40 == 25) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}3.png`;
+            this.definirSprite("3");
         }
     }
 
@@ -290,15 +290,15 @@ class Character {
 
         if (this.ePlayer1) {
             if (this.contImg % 20 == 0) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+                this.definirSprite("-basic");
             } else if (this.contImg % 20 == 10) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-front.png`;
+                this.definirSprite("-front");
             }
         } else {
             if (this.contImg % 20 == 0) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+                this.definirSprite("-basic");
             } else if (this.contImg % 20 == 10) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-late.png`;
+                this.definirSprite("-late");
             }
         }
     }
@@ -311,15 +311,15 @@ class Character {
 
         if (this.ePlayer1) {
             if (this.contImg % 20 == 0) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+                this.definirSprite("-basic");
             } else if (this.contImg % 20 == 10) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-late.png`;
+                this.definirSprite("-late");
             }
         } else {
             if (this.contImg % 20 == 0) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic.png`;
+                this.definirSprite("-basic");
             } else if (this.contImg % 20 == 10) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-front.png`;
+                this.definirSprite("-front");
             }
         }
     }
@@ -331,7 +331,7 @@ class Character {
         this.atacando = true;
         this.tipoAtaque = "jab";
 
-        this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab1.png`;
+        this.definirSprite("-jab1");
 
         const offsetX = this.olhandoParaEsquerda ? -120 : this.largura + 20;
 
@@ -345,7 +345,7 @@ class Character {
 
         setTimeout(() => {
             if (this.atacando) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jab2.png`;
+                this.definirSprite("-jab2");
             }
         }, this.duracaoAtaque / 10);
 
@@ -367,7 +367,7 @@ class Character {
         this.atacando = true;
         this.tipoAtaque = "chute";
 
-        this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short1.png`;
+        this.definirSprite("-short1");
 
         const offsetX = this.olhandoParaEsquerda ? -115 : this.largura + 45;
 
@@ -381,7 +381,7 @@ class Character {
 
         setTimeout(() => {
             if (this.atacando) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-short2.png`;
+                this.definirSprite("-short2");
             }
         }, this.duracaoAtaque / 3);
 
@@ -403,9 +403,9 @@ class Character {
         this.contAgachar++;
 
         if (this.contAgachar <= 10) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-basic2.png`;
+            this.definirSprite("-basic2");
         } else {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-guard.png`;
+            this.definirSprite("-guard");
         }
     }
 
@@ -415,7 +415,7 @@ class Character {
             this.estaNoChao = false;
             this.teclaPuloLiberada = false;
 
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-up.png`;
+            this.definirSprite("-jump-up");
         }
     }
 
@@ -425,9 +425,9 @@ class Character {
 
             if (!this.atacando) {
                 if (this.velocidadeY < 0) {
-                    this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-up.png`;
+                    this.definirSprite("-jump-up");
                 } else {
-                    this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-jump-down.png`;
+                    this.definirSprite("-jump-down");
                 }
             }
         }
@@ -446,11 +446,11 @@ class Character {
     derrota() {
         this.derrotaImg++;
         if (this.derrotaImg < 10) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat1.png`;
+            this.definirSprite("-defeat1");
         } else if (this.derrotaImg < 20) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat2.png`;
+            this.definirSprite("-defeat2");
         } else {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat3.png`;
+            this.definirSprite("-defeat3");
         }
     }
 
@@ -458,9 +458,9 @@ class Character {
         this.contImg++;
 
         if (this.contImg % 40 == 0) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory1.png`;
+            this.definirSprite("-victory1");
         } else if (this.contImg % 40 == 10) {
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory2.png`;
+            this.definirSprite("-victory2");
         }
     }
 
@@ -496,8 +496,8 @@ class Character {
 
         // Se não estiver agachado, troca a imagem para a animação de impacto
         if (this.estadoAtual !== "agachado") {
-            const sulfixoSprite = (tipoAtaque === "jab") ? "punched-jab" : "punched-short";
-            this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-${sulfixoSprite}.png`;
+            const sulfixoSprite = (tipoAtaque === "jab") ? "-punched-jab" : "-punched-short";
+            this.definirSprite(sulfixoSprite);
         }
 
     }
@@ -514,20 +514,20 @@ class Character {
             this.frameFimJogo++;
 
             if (this.frameFimJogo <= 20) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat1.png`;
+                this.definirSprite("-defeat1");
             } else if (this.frameFimJogo <= 40) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat2.png`;
+                this.definirSprite("-defeat2");
             } else {
                 // Congela no defeat3 para sempre
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-defeat3.png`;
+                this.definirSprite("-defeat3");
             }
         } else {
             this.frameFimJogo++;
 
             if (this.frameFimJogo % 80 == 0) {
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory1.png`;
+                this.definirSprite("-victory1");
             } else if (this.frameFimJogo % 80 == 40){
-                this.imagem.src = `assets/personagem/${this.nome}/${this.nome}-victory2.png`;
+                this.definirSprite("-victory2");
             }
         }
     }
@@ -544,6 +544,14 @@ class Character {
         this.olhandoParaEsquerda = !estaNaEsquerda;
 
         // Restaura o sprite padrão parado
-        this.imagem.src = `assets/personagem/${this.nome}/${this.nome}1.png`;
+        this.definirSprite("1");
+    }
+
+    definirSprite(caminhoRelativo) {
+        const urlCompleta = `assets/personagem/${this.nome}/${this.nome}${caminhoRelativo}.png`;
+        const imgCache = assets.obter(urlCompleta);
+        if (imgCache) {
+            this.imagem = imgCache;
+        }
     }
 }

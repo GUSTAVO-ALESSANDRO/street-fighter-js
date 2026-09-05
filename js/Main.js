@@ -28,6 +28,13 @@ class Main {
         this.historicoRounds = [];
 
         this.ui = null;
+
+        this.sufixos = [
+            "basic", "basic2", "1", "2", "3", "front", "late", 
+            "jab1", "jab2", "short1", "short2", "guard", 
+            "jump-up", "jump-down", "defeat1", "defeat2", "defeat3", 
+            "victory1", "victory2", "punched-jab", "punched-short"
+        ];
     }
 
     iniciar(){
@@ -47,7 +54,7 @@ class Main {
         return ehDireita ? "direita" : "esquerda";
     }
 
-    jogar(configuracoes) {
+    async jogar(configuracoes) {
         this.roundAtual = 1;
         this.vitoriasP1 = 0;
         this.vitoriasP2 = 0;
@@ -55,8 +62,17 @@ class Main {
         this.historicoRounds = [];
         this.configuracoes = configuracoes;
 
+        // Desabilita comandos até concluir a carga
+        this.podeLutar = false;
+
+        // carrega o cenário
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
 
+        // monta lista de imagens dos personagens e faz o carregamento em Cache
+        const urlsPersonagens = this.gerarListaUrlsSprites(configuracoes.p1, configuracoes.p2);
+        await assets.carregarImagens(urlsPersonagens);
+
+        // instancia os personagens com as imagens na cache
         this.player1 = new Character(100, 270, true, configuracoes.p1);  
         this.player2 = new Character(780, 270, false, configuracoes.p2); 
 
@@ -66,7 +82,6 @@ class Main {
             this.bot = null;
         }
 
-        // Define quem olha para onde com base no lado e na orientação nativa do sprite
         const orientP1 = this.acharOrientacaoPersonagem(configuracoes.p1);
         const orientP2 = this.acharOrientacaoPersonagem(configuracoes.p2);
 
@@ -75,11 +90,18 @@ class Main {
 
         this.atualizarHUD();
 
-        this.imagemCenario.onload = () => {
+        // Aguarda a confirmação de carga do cenário para iniciar o loop
+        if (this.imagemCenario.complete) {
             this.jogoRodando = true;
             this.iniciarRound();
             this.loop();
-        };
+        } else {
+            this.imagemCenario.onload = () => {
+                this.jogoRodando = true;
+                this.iniciarRound();
+                this.loop();
+            };
+        }
     }
 
     loop = () => {
@@ -394,6 +416,18 @@ class Main {
         this.atualizarHUD();
         this.trocandoRound = false;
         this.iniciarRound();
+    }
+
+    gerarListaUrlsSprites(nomeP1, nomeP2) {
+        const urls = [];
+        [nomeP1.toLowerCase(), nomeP2.toLowerCase()].forEach(nome => {
+            this.sufixos.forEach(sufixo => {
+                urls.push(`assets/personagem/${nome}/${nome}-${sufixo}.png`);
+                urls.push(`assets/personagem/${nome}/${nome}${sufixo}.png`);
+            });
+        });
+
+        return urls;
     }
 }
 
