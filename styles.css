@@ -570,3 +570,11 @@ body {
   margin-right: 6px;
   vertical-align: middle;
 }
+
+.creditos {
+  margin-top: 25px;
+  font-size: 0.9rem;
+  color: #cccccc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}

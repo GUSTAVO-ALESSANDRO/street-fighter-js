@@ -14,6 +14,7 @@
       <h1 class="titulo-jogo">STREET FIGHTER <span class="destaque">JS</span></h1>
       <p class="subtitulo">Pressione o botão para entrar</p>
       <button id="botao-iniciar-menu" class="botao botao-grande">PRESSIONE START</button>
+      <p class="creditos">Desenvolvido por Gustavo Alessandro</p>
     </div>
   </div>
 
@@ -25,8 +26,43 @@
       
       <div class="conteudo-scroll">
         <section class="secao-instrucao">
-          <h3>Sobre o Jogo</h3>
-          <p>Este é um projeto inspirado no clássico <strong>Street Fighter</strong> com funcionalidades reduzidas. O objetivo é vencer <strong>2 rounds</strong> para conquistar a vitória da partida.</p>
+          <h3>Sobre o Jogo & Objetivo</h3>
+          <p>
+            O <strong>Street Fighter JS</strong> é uma versão inspirada no clássico <strong>Street Fighter</strong> com 
+            funcionalidades reduzidas. Seu principal objetivo é derrotar o oponente em combate direto, reduzindo a 
+            barra de vida dele a zero antes que o tempo acabe.
+          </p>
+          <p>
+            Uma partida completa é disputada no formato <strong>Melhor de 3 Rounds</strong>, ou seja, vence a partida 
+            quem conseguir <strong>2 vitórias</strong> em rounds primeiro, ou quem vencer o 1º round e empatar outro.
+          </p>
+          <p>
+            Caso o tempo de luta do round acabe, vence aquele que tiver mais vida depois do tempo final.
+          </p>
+        </section>
+
+        <section class="secao-instrucao">
+          <h3>Mecânicas de Luta e Sistema de Energia</h3>
+          <p>
+            Durante as lutas, você conta com um conjunto de movimentos e estratégias de ataque e defesa:
+          </p>
+          <ul>
+            <li><p><strong>Movimentação e Pulo:</strong> Desloque-se para frente ou para trás para controlar a distância, 
+              ou pule para desviar de golpes e projéteis.</p>
+            </li>
+            <li><p><strong>Defesa (Agaixado):</strong> Ao se abaixar, seu lutador entra em postura defensiva. 
+              A defesa reduz drasticamente o impacto dos golpes recebidos, fazendo você sofrer apenas 
+              <strong>1/3 do dano normal</strong>.</p>
+            </li>
+            <li><p><strong>Golpes Básicos (Jab e Chute Baixo):</strong> Use golpes curtos para pressionar o adversário, 
+              quebrar o ritmo dele e causar dano rápido.</p>
+            </li>
+            <li><p><strong>Barra de Energia & Poder Especial:</strong> A cada ataque efetuado com sucesso ou a cada defesa 
+              realizada, sua barra de energia se acumula, quando a barra de energia estiver completamente cheia, você 
+              pode liberar um <strong>Golpe Especial (Poder/Projétil)</strong>, um ataque de longa distância que causa 
+              grande quantidade de dano ao oponente caso seja acertado!</p>
+            </li>
+          </ul>
         </section>
 
         <section class="secao-instrucao">
@@ -98,8 +134,20 @@
         </section>
 
         <section class="secao-instrucao">
-          <h3>Personalização</h3>
-          <p>No menu principal você pode alterar o <strong>personagem</strong> dos lutadores e selecionar o <strong>cenário de fundo</strong> da batalha.</p>
+          <h3>Modos de Jogo, Personalização & Placar</h3>
+          <p>No menu principal você tem acesso total a várias opções de jogo e personalização:</p>
+          <ul>
+            <li><p><strong>Jogador vs Jogador (PvP):</strong> Enfrente um amigo no mesmo teclado usando os controles 
+              do P1 e P2.</p></li>
+            <li><p><strong>Jogador vs PC (PvC):</strong> Teste suas habilidades contra a inteligência artificial da máquina, 
+              que escolhe seu personagem aleatoriamente e reage às suas ações.</p></li>
+            <br>
+            <li><p><strong>Personalização Completa:</strong> Selecione livremente os personagens de cada lutador e altere o
+               cenário de fundo do arena antes de iniciar a luta.</p></li>
+            <br>
+            <li><p><strong>Placar de Vitórias:</strong> O jogo mantém um histórico contínuo com o placar de vitórias em tempo 
+              real para cada jogador ou para a máquina, somando pontos a cada partida conquistada.</p></li>
+          </ul>
         </section>
       </div>
 
