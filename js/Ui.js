@@ -21,7 +21,7 @@ class UI{
         // Objeto vazio que vai guardar as opções do jogo
         this.configuracaoJogo = {
             modo: "pvc",
-            p1: "Ruy",
+            p1: "Ryu",
             p2: null,
             cenario: "Suzaku-JPN"
         };

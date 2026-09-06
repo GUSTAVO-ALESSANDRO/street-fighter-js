@@ -29,11 +29,14 @@ class Main {
 
         this.ui = null;
 
+        this.projeteis = [];
+
         this.sufixos = [
             "basic", "basic2", "1", "2", "3", "front", "late", 
             "jab1", "jab2", "short1", "short2", "guard", 
             "jump-up", "jump-down", "defeat1", "defeat2", "defeat3", 
-            "victory1", "victory2", "punched-jab", "punched-short"
+            "victory1", "victory2", "punched-jab", "punched-short",
+            "power", "power1", "power2", "power3"
         ];
     }
 
@@ -61,6 +64,7 @@ class Main {
         this.trocandoRound = false; 
         this.historicoRounds = [];
         this.configuracoes = configuracoes;
+        this.projeteis = [];
 
         // Desabilita comandos até concluir a carga
         this.podeLutar = false;
@@ -161,6 +165,16 @@ class Main {
                 this.player2.update(entradasP2, this.player1, this.podeLutar);
             }
 
+            if (this.projeteis) {
+                for (let i = this.projeteis.length - 1; i >= 0; i--) {
+                    const p = this.projeteis[i];
+                    p.update();
+                    if (p.x < -100 || p.x > this.canvas.width + 100 || p.destruido) {
+                        this.projeteis.splice(i, 1);
+                    }
+                }
+            }
+
             if (this.player1 && this.player2) {
                 this.checarAtaques();
             }
@@ -173,21 +187,49 @@ class Main {
 
         if (this.player1) this.player1.draw(this.ctx);
         if (this.player2) this.player2.draw(this.ctx);
+
+        if (this.projeteis) {
+            this.projeteis.forEach(p => p.draw(this.ctx));
+        }
     }
 
     checarAtaques() {
         if (this.colidir(this.player1, this.player2)) {
+            if (!this.player1.hitbox) return;
             this.player1.hitbox.jaAcertou = true;
-            const dano = (this.player1.tipoAtaque === "jab") ? 6 : 8;
+            const dano = (this.player1.tipoAtaque === "jab") ? 6 : (this.player1.tipoAtaque === "poder" ? 30 : 8);
             this.player2.tomarDano(dano, this.player1.tipoAtaque);
+
+            if (this.player1.tipoAtaque === "jab") this.player1.ganharEnergia(10);
+            if (this.player1.tipoAtaque === "chute") this.player1.ganharEnergia(8);
+
             this.atualizarHUD();
         }
 
         if (this.colidir(this.player2, this.player1)) {
+            if (!this.player2.hitbox) return;
             this.player2.hitbox.jaAcertou = true;
-            const dano = (this.player2.tipoAtaque === "jab") ? 6 : 8;
+            const dano = (this.player2.tipoAtaque === "jab") ? 6 : (this.player2.tipoAtaque === "poder" ? 30 : 8);
             this.player1.tomarDano(dano, this.player2.tipoAtaque);
+
+            if (this.player2.tipoAtaque === "jab") this.player2.ganharEnergia(10);
+            if (this.player2.tipoAtaque === "chute") this.player2.ganharEnergia(8);
+
             this.atualizarHUD();
+        }
+
+        if (this.projeteis) {
+            for (let i = this.projeteis.length - 1; i >= 0; i--) {
+                const p = this.projeteis[i];
+                const alvo = p.ePlayer1 ? this.player2 : this.player1;
+
+                if (this.colidirProjetil(p, alvo)) {
+                    alvo.tomarDano(p.dano || 30, "poder");
+                    p.destruido = true;
+                    this.projeteis.splice(i, 1);
+                    this.atualizarHUD();
+                }
+            }
         }
     }
 
@@ -205,23 +247,40 @@ class Main {
         );
     }
 
+    colidirProjetil(projetil, defensor) {
+        if (!projetil || !defensor || !defensor.hurtbox) return false;
+
+        const pBox = {
+            x: projetil.x,
+            y: projetil.y,
+            largura: projetil.largura || 50,
+            altura: projetil.altura || 50
+        };
+        const hurt = defensor.hurtbox;
+
+        return (
+            pBox.x < hurt.x + hurt.largura &&
+            pBox.x + pBox.largura > hurt.x &&
+            pBox.y < hurt.y + hurt.altura &&
+            pBox.y + pBox.altura > hurt.y
+        );
+    }
+
     atualizarHUD() {
         const barraEsquerda = document.getElementById("vida-p1");
         const barraDireita = document.getElementById("vida-p2");
+        const energiaEsquerda = document.getElementById("energia-p1");
+        const energiaDireita = document.getElementById("energia-p2");
         const nomeEsquerda = document.getElementById("nome-p1");
         const nomeDireita = document.getElementById("nome-p2");
 
-        // Verifica se no round atual o P1 está na esquerda ou na direita
         const p1NaEsquerda = (this.roundAtual % 2 !== 0);
-
-        // Quem está do lado esquerdo e do lado direito no momento
         const personagemEsquerda = p1NaEsquerda ? this.player1 : this.player2;
         const personagemDireita = p1NaEsquerda ? this.player2 : this.player1;
 
         const nomeP1Str = this.configuracoes ? this.configuracoes.p1.toUpperCase() : "P1";
         const nomeP2Str = this.configuracoes ? this.configuracoes.p2.toUpperCase() : "P2";
 
-        // Atualiza textos do HUD mantendo a posição visual correta da tela
         if (nomeEsquerda) {
             nomeEsquerda.textContent = p1NaEsquerda 
                 ? `P1: ${nomeP1Str} (${this.vitoriasP1})` 
@@ -233,7 +292,6 @@ class Main {
                 : `${nomeP1Str} :P1 (${this.vitoriasP1})`;
         }
 
-        // Atualiza as barras com base no personagem físico que está naquele lado
         if (barraEsquerda && personagemEsquerda) {
             const porc1 = Math.max(0, (personagemEsquerda.vida / personagemEsquerda.vidaMaxima) * 100);
             barraEsquerda.style.width = `${porc1}%`;
@@ -242,6 +300,16 @@ class Main {
         if (barraDireita && personagemDireita) {
             const porc2 = Math.max(0, (personagemDireita.vida / personagemDireita.vidaMaxima) * 100);
             barraDireita.style.width = `${porc2}%`;
+        }
+
+        if (energiaEsquerda && personagemEsquerda) {
+            const porcEnergia1 = Math.max(0, (personagemEsquerda.energia / personagemEsquerda.energiaMaxima) * 100);
+            energiaEsquerda.style.width = `${porcEnergia1}%`;
+        }
+
+        if (energiaDireita && personagemDireita) {
+            const porcEnergia2 = Math.max(0, (personagemDireita.energia / personagemDireita.energiaMaxima) * 100);
+            energiaDireita.style.width = `${porcEnergia2}%`;
         }
     }
 
@@ -395,6 +463,8 @@ class Main {
             overlay.classList.add("escondido");
             texto.classList.remove("texto-status");
         }
+
+        this.projeteis = [];
 
         // Alterna a posição inicial de spawn a cada round
         const p1LadoEsquerdo = (this.roundAtual % 2 !== 0);

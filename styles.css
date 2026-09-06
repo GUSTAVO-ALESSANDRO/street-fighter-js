@@ -397,6 +397,28 @@ body {
   transition: width 0.2s ease-out;
 }
 
+.barra-energia-externa {
+  width: 50%;
+  max-width: 190px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.barra-energia-interna {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ffd700 0%, #ffeb3b 100%);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.75);
+  transition: width 0.2s ease-out;
+}
+
+.energia-direita {
+  margin-left: auto;
+}
+
 .alinhar-direita .barra-vida-interna {
   margin-left: auto;
 }

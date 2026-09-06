@@ -76,6 +76,12 @@ class Character {
 
         this.vidaMaxima = 100;
         this.vida = 100;
+
+        this.energiaMaxima = 100;
+        this.energia = 0;
+
+        this.tomandoDano = false;
+        this.tempoHitstun = 0;
     }
 
     draw(ctx) {
@@ -95,9 +101,7 @@ class Character {
             // Alinha a base da imagem exatamente na linha do chão (evita flutuar)
             const desenharY = (this.y + this.altura) - alturaRender;
 
-            const olhaParaDireita = !this.olhandoParaEsquerda;
-            const precisaEspelhar = (olhaParaDireita && this.orientacaoNativa === "esquerda") ||
-                                    (!olhaParaDireita && this.orientacaoNativa === "direita");
+            const precisaEspelhar = this.deveEspelharImagem();
 
             // Ajuste X para alinhar o corpo e evitar que o imagem vá para trás no ataque devido ao aumento do PNG
             let desenharX = this.x;
@@ -170,15 +174,17 @@ class Character {
         let teclaBaixo = false;
         let teclaJab = false;
         let teclaChute = false;
+        let teclaPoder = false;
 
         // Só lê os comandos do teclado se puder lutar
         if (podeLutar) {
-            teclaDireita = this.ePlayer1 ? teclas.p1_direita : teclas.p2_direita;
-            teclaEsquerda = this.ePlayer1 ? teclas.p1_esquerda : teclas.p2_esquerda;
-            teclaCima     = this.ePlayer1 ? teclas.p1_cima     : teclas.p2_cima;
-            teclaBaixo    = this.ePlayer1 ? teclas.p1_baixo    : teclas.p2_baixo;
-            teclaJab      = this.ePlayer1 ? teclas.p1_jab      : teclas.p2_jab;
-            teclaChute    = this.ePlayer1 ? teclas.p1_chute    : teclas.p2_chute;
+            teclaDireita    = this.ePlayer1 ? teclas.p1_direita : teclas.p2_direita;
+            teclaEsquerda   = this.ePlayer1 ? teclas.p1_esquerda : teclas.p2_esquerda;
+            teclaCima       = this.ePlayer1 ? teclas.p1_cima     : teclas.p2_cima;
+            teclaBaixo      = this.ePlayer1 ? teclas.p1_baixo    : teclas.p2_baixo;
+            teclaJab        = this.ePlayer1 ? teclas.p1_jab      : teclas.p2_jab;
+            teclaChute      = this.ePlayer1 ? teclas.p1_chute    : teclas.p2_chute;
+            teclaPoder      = this.ePlayer1 ? teclas.p1_power : teclas.p2_power;
         }
 
         // Libera as teclas de ataque depois do jogador soltá-las
@@ -218,6 +224,10 @@ class Character {
             else if (teclaChute && this.teclaChuteLiberada) {
                 this.teclaChuteLiberada = false;
                 this.chute();
+            }
+
+            if (teclaPoder) {
+                this.poder();
             }
         }
 
@@ -265,6 +275,12 @@ class Character {
     acharOrientacaoPersonagem(nome_personagem) {
         const olhaParaDireita = ORIENTACAO_PERSONAGEM.direita.includes(nome_personagem);
         return olhaParaDireita ? "direita" : "esquerda";
+    }
+
+    deveEspelharImagem() {
+        const olhaParaDireita = !this.olhandoParaEsquerda;
+        return (olhaParaDireita && this.orientacaoNativa === "esquerda") ||
+               (!olhaParaDireita && this.orientacaoNativa === "direita");
     }
 
     parado() {
@@ -419,6 +435,67 @@ class Character {
         }
     }
 
+    ganharEnergia(quantidade) {
+        if (!Number.isFinite(quantidade) || quantidade <= 0) return;
+        this.energia = Math.min(this.energiaMaxima, this.energia + quantidade);
+        this.atualizarHudGlobal();
+    }
+
+    atualizarHudGlobal() {
+        const mainInstance = window.main || main;
+        if (mainInstance) {
+            mainInstance.atualizarHUD();
+        }
+    }
+
+    poder() {
+        if (this.energia < 100 || !this.podeAtacar || this.atacando) return;
+
+        this.podeAtacar = false;
+        this.atacando = true;
+        this.tipoAtaque = "poder";
+        this.hitbox = null;
+
+        this.definirSprite("-power1");
+        this.atualizarHudGlobal();
+
+        setTimeout(() => {
+            if (this.atacando){
+                this.definirSprite("-power2");
+            }
+        }, 100);
+
+        setTimeout(() => {
+            if (this.atacando){
+                this.definirSprite("-power3");
+            }
+        }, 200);
+
+        setTimeout(() => {
+            if (this.atacando) {
+                const direcao = this.olhandoParaEsquerda ? -1 : 1;
+                const posX = this.olhandoParaEsquerda ? this.x - 140 : this.x + this.largura + 90;
+                const posY = this.y + 40;
+                const imgProjetil = assets.obter(`assets/personagem/${this.nome}/${this.nome}-power.png`) || assets.obter(`assets/personagem/${this.nome}/${this.nome}-power1.png`) || null;
+                const precisaEspelhar = this.deveEspelharImagem();
+
+                const mainInstance = window.main || main;
+                if (mainInstance && mainInstance.projeteis) {
+                    mainInstance.projeteis.push(new Projetil(posX, posY, this.ePlayer1, direcao, imgProjetil, precisaEspelhar));
+                }
+
+                this.energia = 0;
+                this.atualizarHudGlobal();
+            }
+        }, 300);
+
+        setTimeout(() => {
+            this.atacando = false;
+            this.tipoAtaque = "";
+            this.podeAtacar = true;
+        }, 520);
+    }
+
     aplicarGravidade(teclaCima) {
         if (!this.estaNoChao) {
             this.velocidadeY += this.gravidade;
@@ -443,27 +520,6 @@ class Character {
         }
     }
 
-    derrota() {
-        this.derrotaImg++;
-        if (this.derrotaImg < 10) {
-            this.definirSprite("-defeat1");
-        } else if (this.derrotaImg < 20) {
-            this.definirSprite("-defeat2");
-        } else {
-            this.definirSprite("-defeat3");
-        }
-    }
-
-    vitoria() {
-        this.contImg++;
-
-        if (this.contImg % 40 == 0) {
-            this.definirSprite("-victory1");
-        } else if (this.contImg % 40 == 10) {
-            this.definirSprite("-victory2");
-        }
-    }
-
     limitarTela(limiteCanvas) {
         if (this.x < 0) {
             this.x = 0;
@@ -476,30 +532,27 @@ class Character {
     tomarDano(quantidade, tipoAtaque) {
         if (this.vida <= 0) return;
 
-        // Cancela imediatamente qualquer ataque e limpa a hitbox ativa
         this.atacando = false;
         this.hitbox = null;
         this.tipoAtaque = "";
 
-        // Se estiver agachado, reduz o dano para 1/3
         let danoFinal = quantidade;
-        if (this.estadoAtual === "agachado") {
+        const estavaAgachado = this.estadoAtual === "agachado";
+
+        if (estavaAgachado) {
             danoFinal = Math.floor(quantidade / 3);
+            this.ganharEnergia(15);
         }
 
-        // Aplica o danoFinal correto na vida
         this.vida = Math.max(0, this.vida - danoFinal);
 
-        // Ativa o estado de Hitstun por 10 frames
         this.tomandoDano = true;
         this.tempoHitstun = 20;
 
-        // Se não estiver agachado, troca a imagem para a animação de impacto
-        if (this.estadoAtual !== "agachado") {
+        if (!estavaAgachado) {
             const sulfixoSprite = (tipoAtaque === "jab") ? "-punched-jab" : "-punched-short";
             this.definirSprite(sulfixoSprite);
         }
-
     }
 
     atualizarVitoriaDerrota() {
@@ -536,6 +589,7 @@ class Character {
         this.x = x;
         this.y = y;
         this.vida = this.vidaMaxima;
+        this.energia = 0;
         this.velocidadeX = 0;
         this.velocidadeY = 0;
         this.estaNoChao = true;
