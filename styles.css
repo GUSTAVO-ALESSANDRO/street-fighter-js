@@ -542,6 +542,11 @@ body {
   border-color: #27ae60;
 }
 
+.tecla.tecla-poder {
+  color: #df2c0c;
+  border-color: #e40909;
+}
+
 .tecla.invisivel {
   visibility: hidden;
   background: transparent;
