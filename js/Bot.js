@@ -23,11 +23,6 @@ class Bot {
 
         const distancia = Math.abs(this.p2.x - this.p1.x);
 
-        if(this.p1.energia == 100){
-            teclasBot.p2_power = true;
-            return teclasBot;
-        }
-
         // se estiver pulando, mantém o movimento em direção a o player
         if (!this.p2.estaNoChao) {
             if (this.direcaoAndar === "frente") {
@@ -98,6 +93,11 @@ class Bot {
         }
         // decisão a longa distancia
         else {
+            if(this.p2.energia == 100){
+                teclasBot.p2_power = true;
+                return teclasBot;
+            }
+
             const acaoAproximacao = this.gerarNumeroAleatorio(1, 20);
 
             if (acaoAproximacao === 1) {
