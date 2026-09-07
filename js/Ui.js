@@ -1,6 +1,6 @@
 // Objeto que lista o que existe nas pastas
 const CATALOGO_DE_ASSETS = {
-    personagens: ["Ryu", "Ken"],
+    personagens: ["Ryu", "Ken", "Akuma", "Sakura"],
     cenarios: ["Suzaku-JPN", "Ruinas-THA", "Cachoeira-VNZ", "Blanka-BRA", "Beco-JPN", "Amazonia-BRA"]
 };
 

@@ -1,6 +1,6 @@
 const ORIENTACAO_PERSONAGEM = {
     direita: ["Ken"],
-    esquerda: ["Ryu"]
+    esquerda: ["Ryu", "Akuma", "Sakura"]
 };
 
 class Character {    
