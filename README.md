@@ -44,6 +44,12 @@ Para desenvolver o projeto, foi utilizado as segunites tecnologias:
 
 ---
 
+## 🎨 Créditos e Recursos
+Os sprites dos personagens e elementos gráficos foram obtidos a partir de comunidades de preservação de jogos:
+- **Sprites e Animações:** Retirados de *Street Fighter Alpha 3 (Arcade)* via [The Spriters Resource](https://www.spriters-resource.com/arcade/streetfighteralpha3/).
+
+---
+
 ## 📦 Instruções de Instalação (Uso Local)
 Como é um projeto web puro, não há necessidade de instalação de dependências ou build.
 1. Clone o repositório: `git clone https://github.com/gustavo-alessandro/street-fighter-js`
