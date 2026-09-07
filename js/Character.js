@@ -348,6 +348,7 @@ class Character {
         this.tipoAtaque = "jab";
 
         this.definirSprite("-jab1");
+        sons.tocarGolpe();
 
         const offsetX = this.olhandoParaEsquerda ? -120 : this.largura + 20;
 
@@ -384,6 +385,7 @@ class Character {
         this.tipoAtaque = "chute";
 
         this.definirSprite("-short1");
+        sons.tocarGolpe();
 
         const offsetX = this.olhandoParaEsquerda ? -115 : this.largura + 45;
 
@@ -458,6 +460,7 @@ class Character {
 
         this.definirSprite("-power1");
         this.atualizarHudGlobal();
+        sons.tocarEspecial();
 
         setTimeout(() => {
             if (this.atacando){
@@ -553,6 +556,8 @@ class Character {
             const sulfixoSprite = (tipoAtaque === "jab") ? "-punched-jab" : "-punched-short";
             this.definirSprite(sulfixoSprite);
         }
+
+        sons.tocarAcerto();
     }
 
     atualizarVitoriaDerrota() {

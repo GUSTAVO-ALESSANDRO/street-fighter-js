@@ -109,6 +109,7 @@ class UI{
         // Botão start inicial, para o menu
         if (this.botaoStartInicial) {
             this.botaoStartInicial.addEventListener("click", () => {
+                sons.tocarMúsica();
                 this.telaInicial.classList.add("escondido");
                 this.menu.classList.remove("escondido");
             });

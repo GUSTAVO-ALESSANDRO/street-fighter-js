@@ -72,6 +72,9 @@ class Main {
         // carrega o cenário
         this.imagemCenario.src = `assets/cenario/${configuracoes.cenario}.png`;
 
+        //toca musica de fundo
+        sons.tocarMúsica();
+
         // monta lista de imagens dos personagens e faz o carregamento em Cache
         const urlsPersonagens = this.gerarListaUrlsSprites(configuracoes.p1, configuracoes.p2);
         await assets.carregarImagens(urlsPersonagens);
