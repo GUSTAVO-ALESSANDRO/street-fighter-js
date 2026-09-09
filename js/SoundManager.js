@@ -11,7 +11,9 @@ class SoundManager {
     this.sfx = {
       golpe: new Audio('assets/audio/golpe.wav'),
       acerto: new Audio('assets/audio/acerto.wav'),
-      especial: new Audio('assets/audio/especial.wav')
+      especial: new Audio('assets/audio/especial.wav'),
+      fight: new Audio('assets/audio/fight.mp3'),
+      ko: new Audio('assets/audio/ko.mp3')
     };
 
     // Escuta a PRIMEIRA interação do usuário para destravar o áudio no navegador
@@ -42,12 +44,13 @@ class SoundManager {
     this.bgm.pause();
   }
 
-  tocarEfeito(audioObj, volume = 0.7) {
+  tocarEfeito(audioObj, volume = 0.7, velocidade = 1.0) {
     if (!audioObj) return;
     
     // Clona o nó do áudio para permitir sobreposição de sons sem atraso
     const clone = audioObj.cloneNode();
     clone.volume = volume;
+    clone.playbackRate = velocidade;
     clone.play().catch(erro => {
       console.log("Erro ao tocar SFX:", erro);
     });
@@ -63,6 +66,14 @@ class SoundManager {
 
   tocarEspecial() {
     this.tocarEfeito(this.sfx.especial, 0.35);
+  }
+
+  tocarFigth() {
+    this.tocarEfeito(this.sfx.fight, 0.35);
+  }
+
+  tocarKO() {
+    this.tocarEfeito(this.sfx.ko, 0.5, 1.5);
   }
 }
 

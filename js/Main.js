@@ -145,7 +145,8 @@ class Main {
                 if (tempoEsgotado && !alguemMorreu) {
                     this.exibirKOTimeOver("TIME OVER");
                 } else {
-                    this.exibirKOTimeOver("K.O");
+                    this.exibirKOTimeOver("K.O.");
+                    sons.tocarKO();
                 }
 
                 this.agendarProximoRound();
@@ -333,6 +334,7 @@ class Main {
 
         setTimeout(() => {
             texto.textContent = "FIGHT!";
+            sons.tocarFigth();
 
             setTimeout(() => {
                 overlay.classList.add("escondido");
