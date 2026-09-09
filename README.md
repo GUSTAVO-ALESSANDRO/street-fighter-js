@@ -48,7 +48,7 @@ Para desenvolver o projeto, foi utilizado as segunites tecnologias:
 Os recursos visuais e sonoros foram obtidos a partir de bibliotecas e comunidades de preservação de jogos:
 
 - **Sprites e Animações:** Retirados de *Street Fighter Alpha 3 (Arcade)* via [The Spriters Resource](https://www.spriters-resource.com/arcade/streetfighteralpha3/).
-- **Efeitos Sonoros (SFX):** Obtidos via [Mixkit](https://mixkit.co/free-sound-effects/).
+- **Efeitos Sonoros (SFX):** Obtidos via [Mixkit](https://mixkit.co/free-sound-effects/) e [Pixabay](https://pixabay.com/sound-effects/).
 - **Trilha Sonora (BGM):** Música obtida via [Incompetech](https://incompetech.com/music/royalty-free/music.html).
 
 ---
